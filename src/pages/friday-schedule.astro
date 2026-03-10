@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ScheduleTable from '../components/ScheduleTable';
+import schedule from '../data/friday-schedule.json'
+---
+
+<Layout title="Friday Schedule">
+	<h1>Momentum Intermediate League</h1>
+	<p class="mb-6">@ The York School</p>
+	<ScheduleTable schedule={schedule} />
+</Layout>

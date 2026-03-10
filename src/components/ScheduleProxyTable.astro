@@ -1,0 +1,54 @@
+---
+import type { VolleyballApiResponse } from "../types/dropin";
+
+const response = await fetch("/api/dropin-schedule");
+const data: VolleyballApiResponse = await response.json();
+---
+
+<div class="overflow-x-auto">
+  <table class="min-w-full bg-white shadow-md rounded-lg">
+    <thead class="bg-gray-800 text-white">
+      <tr>
+        <th class="py-3 px-4 uppercase font-semibold text-sm">Date</th>
+        <th class="py-3 px-4 uppercase font-semibold text-sm">Time</th>
+        <th class="py-3 px-4 uppercase font-semibold text-sm">Event</th>
+        <th class="py-3 px-4 uppercase font-semibold text-sm">Location</th>
+        <th class="py-3 px-4 uppercase font-semibold text-sm">Spots Left</th>
+      </tr>
+    </thead>
+    <tbody class="text-gray-700">
+      {
+        data.records.map((item) => (
+          <tr class="border-b border-gray-200 hover:bg-gray-100">
+            <td class="py-3 px-4">
+              {new Date(
+                item.properties.session_start_date + "T00:00:00Z",
+              ).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                timeZone: "UTC",
+              })}
+            </td>
+            <td class="py-3 px-4">
+              {new Date(
+                `1970-01-01T${item.properties.session_start_hour.padStart(2, "0")}:${item.properties.session_start_minute.padStart(2, "0")}`,
+              ).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </td>
+            <td class="py-3 px-4">{item.properties.session_name}</td>
+            <td class="py-3 px-4">
+              {item.locationObject.record.properties.address}
+            </td>
+            <td class="py-3 px-4">
+              {item.properties.session_capacity - item.slotsFilled}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
