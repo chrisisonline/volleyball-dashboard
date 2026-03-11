@@ -1,9 +1,10 @@
 ---
 // An array of navigation link objects. This makes it easy to add or remove links.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 const navLinks = [
-  { href: '/', text: 'Home' },
-  { href: '/friday-schedule', text: 'Friday Schedule' },
-  { href: '/dropin-schedule', text: 'Drop In Schedule' },
+  { href: `${base}/`, text: 'Home' },
+  { href: `${base}/friday-schedule`, text: 'Friday Schedule' },
+  { href: `${base}/dropin-schedule`, text: 'Drop In Schedule' },
 ]
 
 const currentPath = Astro.url.pathname
@@ -21,7 +22,7 @@ const activeClasses = 'bg-teal-900 text-mist-100'
   <nav class="mt-6">
     {
       navLinks.map((link) => {
-        const isActive = link.href === currentPath
+        const isActive = currentPath === link.href || currentPath === link.href.replace(/\/$/, '')
         return (
           <a
             href={link.href}
