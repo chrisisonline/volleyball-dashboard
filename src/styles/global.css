@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap");
 @import "tailwindcss";
 
 @layer base {
   body {
     @apply bg-mist-800 text-lg text-mist-100;
-    font-family: 'Ubuntu', sans-serif;
+    font-family: "Ubuntu", sans-serif;
   }
   h1 {
     @apply text-2xl font-bold;
@@ -13,11 +13,16 @@
     @apply text-xl font-bold;
   }
   table {
-    @apply border-collapse border border-slate-400;
+    @apply min-w-full w-auto border-collapse;
   }
-  td, th {
-    @apply p-4 border border-slate-300;
+  td,
+  th {
+    @apply py-4 px-3 md:py-6 md:px-4;
   }
+}
+
+.table-wrapper {
+  @apply overflow-y-hidden rounded-lg border border-mist-700;
 }
 
 .container {

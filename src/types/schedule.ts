@@ -1,10 +1,10 @@
 export interface Game {
-  time: string;
-  court: number;
-  opponent: string;
+  time: string
+  court: number
+  opponent: string
 }
 
 export interface ScheduleItem {
-  date: string;
-  games: Game[];
+  date: string
+  games: Game[]
 }
