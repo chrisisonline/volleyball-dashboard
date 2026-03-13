@@ -55,6 +55,13 @@ src/
 - Response: `{ records: SessionRecord[] }` — see `src/types/dropin.ts`
 - Fetched client-side (not at build time) due to CORS/dynamic data needs
 
+## Code style
+Always follow the project's ESLint and Prettier configuration exactly when generating code:
+- **Prettier** (`.prettierrc`): no semicolons, single quotes, 2-space indent, trailing commas (ES5), 80-char print width
+- **TypeScript**: prefer `type` imports (`import type`), no `any`, no unused vars
+- **React**: no prop-types (TypeScript handles it), self-close empty components, hooks rules enforced
+- Run `npm run lint` and `npm run format` mentally before outputting code — generated code must pass both without changes
+
 ## Key conventions
 - **Astro components** (`.astro`) = static, zero client JS — used for layout/navigation
 - **React components** (`.tsx`) = interactive islands, hydrated with `client:load` or `client:idle`

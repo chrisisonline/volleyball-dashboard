@@ -1,12 +1,14 @@
 import { useState, useCallback } from 'react'
 import { ArrowLeft, Maximize, Minimize, RotateCcw } from 'lucide-react'
 import Button from '~/components/Button'
+import ConfirmModal from '~/components/ConfirmModal'
 
 const btnClass = 'bg-mist-800'
 
 function ScoreCounter() {
   const [scores, setScores] = useState([0, 0])
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [showResetModal, setShowResetModal] = useState(false)
 
   const adjust = useCallback((team: 0 | 1, delta: number) => {
     setScores((prev) => {
@@ -17,9 +19,12 @@ function ScoreCounter() {
   }, [])
 
   const reset = useCallback(() => {
-    if (window.confirm('Reset both scores to 0?')) {
-      setScores([0, 0])
-    }
+    setShowResetModal(true)
+  }, [])
+
+  const confirmReset = useCallback(() => {
+    setScores([0, 0])
+    setShowResetModal(false)
   }, [])
 
   const toggleFullscreen = useCallback(async () => {
@@ -38,6 +43,14 @@ function ScoreCounter() {
 
   return (
     <div className="relative flex h-dvh w-screen bg-neutral-900 text-white select-none">
+      {showResetModal && (
+        <ConfirmModal
+          message="Reset both scores to 0?"
+          confirmLabel="Reset"
+          onConfirm={confirmReset}
+          onCancel={() => setShowResetModal(false)}
+        />
+      )}
       {/* Floating buttons */}
       <Button
         href={import.meta.env.BASE_URL}
@@ -61,8 +74,8 @@ function ScoreCounter() {
         score={scores[0]}
         onIncrement={() => adjust(0, 1)}
         onDecrement={() => adjust(0, -1)}
-        bgClass="bg-blue-700"
-        activeBgClass="active:bg-blue-600"
+        bgClass="bg-cyan-900"
+        activeBgClass="active:bg-cyan-600"
       />
       <div className="w-1 bg-neutral-900" />
       <TeamPanel
@@ -70,8 +83,8 @@ function ScoreCounter() {
         score={scores[1]}
         onIncrement={() => adjust(1, 1)}
         onDecrement={() => adjust(1, -1)}
-        bgClass="bg-amber-600"
-        activeBgClass="active:bg-amber-500"
+        bgClass="bg-yellow-800"
+        activeBgClass="active:bg-yellow-600"
       />
     </div>
   )
@@ -112,7 +125,7 @@ function TeamPanel({
       </button>
 
       {/* Decrement button */}
-      <Button onClick={onDecrement} className={btnClass}>
+      <Button onClick={onDecrement} className="bg-mist-800">
         &minus; 1
       </Button>
     </div>
