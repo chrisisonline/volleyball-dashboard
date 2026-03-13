@@ -1,9 +1,10 @@
 ---
 import Layout from '~/layouts/Layout.astro'
 import MomentumDropinTable from '~/components/momentum-dropins/MomentumDropinTable'
+import { fetchClinicSchedule } from '~/lib/dropin-api'
 ---
 
 <Layout title="Drop In Schedule">
-  <h1 class="mb-6">Momentum Drop In Schedule</h1>
-  <MomentumDropinTable type="dropin" client:load />
+  <h1 class="mb-6">Momentum Clinic Schedule</h1>
+  <MomentumDropinTable type="clinic" client:load />
 </Layout>

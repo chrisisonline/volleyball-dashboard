@@ -13,7 +13,11 @@ export default function ScheduleTable({ schedule }: ScheduleProps) {
       .map((item) => ({
         ...item,
         games: item.games.filter((game) => {
-          const gameDate = parse(`${item.date} ${game.time}`, 'yyyy-MM-dd h:mm a', new Date())
+          const gameDate = parse(
+            `${item.date} ${game.time}`,
+            'yyyy-MM-dd h:mm a',
+            new Date()
+          )
           return isAfter(gameDate, now)
         }),
       }))
@@ -30,16 +34,23 @@ export default function ScheduleTable({ schedule }: ScheduleProps) {
         <tbody>
           {filteredSchedule.map((item) => (
             <React.Fragment key={item.date}>
-              <tr className="bg-mist-700">
+              <tr className="bg-mist-900">
                 <td colSpan={3}>
-                  {format(parse(item.date, 'yyyy-MM-dd', new Date()), 'EEEE, MMMM d, yyyy')}
+                  {format(
+                    parse(item.date, 'yyyy-MM-dd', new Date()),
+                    'EEEE, MMMM d, yyyy'
+                  )}
                 </td>
               </tr>
               {item.games.map((game) => (
                 <tr key={`${item.date}-${game.time}-${game.opponent}`}>
                   <td>
                     {format(
-                      parse(`${item.date} ${game.time}`, 'yyyy-MM-dd h:mm a', new Date()),
+                      parse(
+                        `${item.date} ${game.time}`,
+                        'yyyy-MM-dd h:mm a',
+                        new Date()
+                      ),
                       'p'
                     )}
                   </td>

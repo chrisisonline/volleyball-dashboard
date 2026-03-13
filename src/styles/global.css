@@ -17,7 +17,7 @@
   }
   td,
   th {
-    @apply py-4 px-3 md:py-6 md:px-4;
+    @apply py-2 px-3 md:py-3 md:px-4;
   }
 }
 

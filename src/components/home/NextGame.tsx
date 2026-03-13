@@ -9,7 +9,11 @@ export default function NextGame({ schedule }: NextGameProps) {
   const upcomingGame = schedule
     .flatMap((day) =>
       day.games.map((game) => {
-        const gameDateTime = parse(`${day.date} ${game.time}`, 'yyyy-MM-dd h:mm a', new Date())
+        const gameDateTime = parse(
+          `${day.date} ${game.time}`,
+          'yyyy-MM-dd h:mm a',
+          new Date()
+        )
         return {
           ...game,
           dateObj: gameDateTime,
