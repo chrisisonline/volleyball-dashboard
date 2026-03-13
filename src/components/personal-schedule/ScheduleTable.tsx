@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import type { ScheduleItem } from '~/types/schedule'
 import { format, isAfter, parse } from 'date-fns'
 
@@ -33,7 +33,7 @@ export default function ScheduleTable({ schedule }: ScheduleProps) {
       <table>
         <tbody>
           {filteredSchedule.map((item) => (
-            <React.Fragment key={item.date}>
+            <Fragment key={item.date}>
               <tr className="bg-mist-900">
                 <td colSpan={3}>
                   {format(
@@ -58,7 +58,7 @@ export default function ScheduleTable({ schedule }: ScheduleProps) {
                   <td>Court {game.court}</td>
                 </tr>
               ))}
-            </React.Fragment>
+            </Fragment>
           ))}
         </tbody>
       </table>

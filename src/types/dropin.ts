@@ -1,3 +1,5 @@
+export type SessionType = 'dropin' | 'clinic'
+
 export interface VolleyballApiResponse {
   records: SessionRecord[]
 }

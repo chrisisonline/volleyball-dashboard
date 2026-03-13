@@ -1,9 +1,9 @@
 ---
 import Layout from '~/layouts/Layout.astro'
-import MomentumDropinTable from '~/components/momentum-dropins/MomentumDropinTable'
+import SessionSchedule from '~/components/sessions/SessionSchedule'
 ---
 
 <Layout title="Drop In Schedule">
   <h1 class="mb-6">Momentum Drop In Schedule</h1>
-  <MomentumDropinTable type="dropin" client:load />
+  <SessionSchedule type="dropin" client:only="react" />
 </Layout>

@@ -1,45 +1,44 @@
-
-# Astro Volleyball Schedule Viewer
+# Volleyball Dashboard — Blueprint
 
 ## Overview
+A personal volleyball schedule tracker built with Astro + React. Shows the user's Friday night league schedule and live drop-in/clinic sessions from the Momentum Volleyball API. Deployed statically to GitHub Pages.
 
-This project is a simple, fast, and content-focused web application for displaying a volleyball tournament schedule. It is built with Astro.js, leveraging its "Islands Architecture" to deliver a highly performant, static-first user experience. The application is designed for the Firebase Studio (formerly Project IDX) development environment.
+## Pages
 
-## Core Technologies
+| Route | File | Description |
+|---|---|---|
+| `/` | `index.astro` | Home — next upcoming game + 2-week drop-in/clinic calendar |
+| `/friday-schedule` | `friday-schedule.astro` | Full Momentum Intermediate League season schedule |
+| `/dropin-schedule` | `dropin-schedule.astro` | All drop-in sessions from API, grouped by location |
+| `/clinic-schedule` | `clinic-schedule.astro` | All clinic sessions from API, grouped by location |
 
-- **Framework**: Astro.js
-- **UI Components**: React
-- **Styling**: Tailwind CSS
-- **Runtime**: Node.js 20
+## Features implemented
 
-## Design & Features
+### Layout & Navigation
+- Fixed header with title and mobile hamburger menu
+- Fixed left sidebar (w-64) with active link highlighting, hidden on mobile
+- Responsive layout — sidebar toggles via `body.menu-open` class
+- GitHub Pages sub-path routing (BASE_URL = `/volleyball-dashboard`)
 
-### Initial Version
+### Home Page
+- **NextGame** card: pulls next game from `friday-schedule.json`, shows date/time/court/opponent
+- **UpcomingCalendar**: 14-day grid (starting Monday) merging drop-in + clinic API data; highlights today; shows availability (spots filled/capacity); links to signup
 
-- **Layout**: A clean, single-column layout with a header and main content area.
-- **Header**: A simple, non-responsive header with the title "Volleyball Schedule" and links to "Home" and "About" pages.
-- **Styling**: Basic styling using Tailwind CSS for typography, spacing, and a simple color scheme.
-- **Pages**:
-  - `index.astro`: The home page, which displays the main schedule.
-  - `about.astro`: An about page with a brief description of the project.
-- **Components**:
-  - `Header.astro`: The site header.
-  - `Layout.astro`: The main layout component.
-  - `Schedule.tsx`: A React component to display the schedule (though not fully interactive yet).
+### Friday Schedule Page
+- **ScheduleTable**: Reads `src/data/friday-schedule.json`; filters out past games; shows date, time, court, opponent
 
-### Previous Change: Convert All Components to React
+### Drop-in & Clinic Pages
+- **MomentumDropinTable**: Fetches live API data; groups sessions by location; shows session name, dates/times, capacity, signup button
+- **SkeletonTable**: Loading state while API data loads
 
-**Goal**: Convert all Astro components (`.astro`) to React components (`.jsx`) for a consistent React-based component architecture.
+### Data Layer
+- `dropin-api.ts`: Fetches Momentum API with required headers; localStorage cache fallback to avoid redundant requests
+- `session-name.ts`: Parses human-readable level (Beginner/Intermediate/Advanced), group (Women's/Men's/Co-Ed), and skill from raw session name strings
+- TanStack Query: infinite stale/GC time — data fetched once per session
 
-### Current Change Request: Add SSR API Route and Schedule Page
-
-**Goal**: Create a server-rendered page that fetches data from an external API via a proxied API route.
-
-### Plan
-
-1.  **Enable SSR**: Update `astro.config.mjs` to use the Node.js adapter, enabling server-side rendering.
-2.  **Create API Proxy**: Create a new API route at `src/pages/api/schedule.ts` that fetches data from an external source with a `Cache-Control` header.
-3.  **Create Schedule Display**:
-    *   Create a new page at `src/pages/schedule.astro`.
-    *   Create a new component `src/components/ScheduleProxyTable.astro` that fetches data from the internal `/api/schedule` endpoint and renders it in a styled HTML table.
-4.  **Add Navigation**: Add a link on the homepage (`index.astro`) to the new schedule page.
+## Design system
+- Tailwind CSS 4 with custom "mist" color scale (mist-100 → mist-900)
+- Teal/cyan accents for interactive elements and highlights
+- `.table-wrapper` class for consistent table scroll/border treatment
+- Rounded session cards with hover states and spots-remaining indicators
+- Volleyball emoji (🏐) as favicon and in header

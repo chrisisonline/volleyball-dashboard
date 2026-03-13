@@ -9,5 +9,5 @@ import fridaySchedule from '~/data/friday-schedule.json'
   <h1 class="mb-4">Upcoming</h1>
   <NextGame schedule={fridaySchedule} />
   <h2 class="mt-8 mb-4">Drop In & Clinic Schedule</h2>
-  <UpcomingCalendar client:load />
+  <UpcomingCalendar client:only="react" />
 </Layout>

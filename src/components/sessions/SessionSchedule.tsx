@@ -1,16 +1,14 @@
 import { useMemo } from 'react'
-import {
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query'
-import { parse, parseISO, format } from 'date-fns'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { parseISO, format } from 'date-fns'
 import { groupBy, mapValues, sortBy, map } from 'lodash-es'
 
 import Button from '~/components/Button'
 import SkeletonTable from '~/components/SkeletonTable'
-import { getCachedSchedule, fetchDropinSchedule, fetchClinicSchedule } from '~/lib/dropin-api'
+import { useSessionQuery } from '~/lib/hooks'
 import { queryClient } from '~/lib/query-client'
-import type { SessionRecord, VolleyballApiResponse } from '~/types/dropin'
+import { formatSessionTime, getSessionSortKey } from '~/lib/session-name'
+import type { SessionRecord, SessionType } from '~/types/dropin'
 
 interface LocationGroup {
   locationName: string
@@ -18,22 +16,15 @@ interface LocationGroup {
   sessions: SessionRecord[]
 }
 
-type ScheduleType = 'dropin' | 'clinic'
-
-const SCHEDULE_CONFIG: Record<ScheduleType, { queryKey: string; fetchFn: () => Promise<VolleyballApiResponse> }> = {
-  dropin: { queryKey: 'dropin-schedule', fetchFn: fetchDropinSchedule },
-  clinic: { queryKey: 'clinic-schedule', fetchFn: fetchClinicSchedule },
-}
-
-interface DropinScheduleProps {
-  type: ScheduleType
+interface SessionScheduleProps {
+  type: SessionType
 }
 
 const COLUMNS = ['Date', 'Event', 'Spots', 'Signup']
 
 // ─── Row ──────────────────────────────────────────────────────────────────────
 
-function DropinRow({ item, even }: { item: SessionRecord; even: boolean }) {
+function SessionRow({ item, even }: { item: SessionRecord; even: boolean }) {
   const { properties, slotsFilled } = item
   const {
     session_name,
@@ -46,22 +37,15 @@ function DropinRow({ item, even }: { item: SessionRecord; even: boolean }) {
 
   return (
     <tr className={even ? 'bg-mist-800' : 'bg-mist-900'}>
-      <td className='text-center'>
+      <td className="text-center">
         {format(parseISO(session_start_date), 'EEE MMM d')} <br />
-        {format(
-          parse(
-            `${session_start_hour}:${session_start_minute}`,
-            'H:m',
-            new Date()
-          ),
-          'h:mm a'
-        )}
+        {formatSessionTime(session_start_hour, session_start_minute)}
       </td>
       <td>{session_name}</td>
-      <td className='text-center'>
+      <td className="text-center">
         {slotsFilled} / {session_capacity}
       </td>
-      <td className='text-center'>
+      <td className="text-center">
         <Button onClick={() => window.open(private_signup_link, '_blank')}>
           Signup
         </Button>
@@ -87,22 +71,20 @@ function LocationTable({
     <div className="table-wrapper">
       <table className="table-fixed">
         <colgroup>
-          <col className="w-1/6" /> {/* Date */}
-          <col className="w-1/2" /> {/* Event */}
-          <col className="w-1/6" /> {/* Spots */}
-          <col className="w-1/6" /> {/* Signup */}
+          <col className="w-1/6" />
+          <col className="w-1/2" />
+          <col className="w-1/6" />
+          <col className="w-1/6" />
         </colgroup>
         <thead>
-          {/* Location header spanning all columns */}
           <tr className="bg-mist-900">
-            <th colSpan={5} className="text-left">
+            <th colSpan={4} className="text-left">
               <h2>{locationName}</h2>
               <span className="text-md font-normal text-mist-300">
                 {address}
               </span>
             </th>
           </tr>
-          {/* Column headers */}
           <tr className="bg-mist-800">
             {COLUMNS.map((col) => (
               <th key={col}>{col}</th>
@@ -111,15 +93,7 @@ function LocationTable({
         </thead>
         <tbody>
           {sessions.map((item, index) => (
-            <DropinRow
-              key={
-                item.properties.session_start_date +
-                item.properties.session_start_hour +
-                item.properties.session_start_minute
-              }
-              even={!!(index % 2)}
-              item={item}
-            />
+            <SessionRow key={item.id} even={!!(index % 2)} item={item} />
           ))}
         </tbody>
       </table>
@@ -129,16 +103,9 @@ function LocationTable({
 
 // ─── Schedule (query + grouping) ──────────────────────────────────────────────
 
-function DropinSchedule({ type }: DropinScheduleProps) {
-  const { queryKey, fetchFn } = SCHEDULE_CONFIG[type]
-  const { data, error, isLoading } = useQuery({
-    queryKey: [queryKey],
-    queryFn: fetchFn,
-    initialData: () => getCachedSchedule(queryKey),
-    initialDataUpdatedAt: 0,
-  })
+function Schedule({ type }: SessionScheduleProps) {
+  const { data, error, isLoading } = useSessionQuery(type)
 
-  // Group by location name, then sort each group's sessions chronologically
   const grouped: Record<string, LocationGroup> = useMemo(
     () =>
       mapValues(
@@ -150,11 +117,7 @@ function DropinSchedule({ type }: DropinScheduleProps) {
           locationName:
             sessions[0].locationObject.record.properties.location_name,
           address: sessions[0].locationObject.record.properties.address,
-          sessions: sortBy(
-            sessions,
-            (s) =>
-              `${s.properties.session_start_date}T${String(s.properties.session_start_hour).padStart(2, '0')}:${String(s.properties.session_start_minute).padStart(2, '0')}`
-          ),
+          sessions: sortBy(sessions, getSessionSortKey),
         })
       ),
     [data]
@@ -198,10 +161,10 @@ function DropinSchedule({ type }: DropinScheduleProps) {
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
-export default function MomentumDropinTable(props: DropinScheduleProps) {
+export default function SessionSchedule(props: SessionScheduleProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <DropinSchedule {...props} />
+      <Schedule {...props} />
     </QueryClientProvider>
   )
 }
