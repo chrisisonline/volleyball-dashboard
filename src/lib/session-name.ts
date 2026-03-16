@@ -1,4 +1,5 @@
 import { parse, format } from 'date-fns'
+import { find } from 'lodash-es'
 import type { SessionRecord } from '~/types/dropin'
 
 export function formatSessionTime(hour: string, minute: string): string {
@@ -12,12 +13,11 @@ export function getSessionSortKey(session: SessionRecord): string {
 }
 
 export interface ParsedSession {
-  level: string | null
-  group: string | null // drop-in: Co-Ed, Women's, etc.
-  skill: string | null // clinic: Serving, Attacking, etc.
+  level: string
+  group: string // drop-in: Co-Ed, Women's, etc.
+  skill: string // clinic: Serving, Attacking, etc.
 }
 
-// Order matters — more specific first to avoid partial matches
 const KNOWN_LEVELS = [
   'Intermediate Plus/Advanced',
   'Intermediate/Intermediate Plus',
@@ -34,43 +34,32 @@ export const LEVEL_SHORT: Record<string, string> = {
   Beginner: 'Beg',
 }
 
+const CLINIC_SKILLS = [
+  'Defense & Attack Transition',
+  'Passing & Serve Reception',
+  'Passing & Reception',
+  'Attacking',
+  'Serving',
+  'Setting',
+  'Defense',
+]
+
 const KNOWN_GROUPS = ["Women's", "Men's", 'Co-Ed', 'Mixed'] as const
 
-function stripCode(name: string): string {
-  return name.replace(/\s*\([A-Z0-9-]+\)\s*$/, '').trim()
-}
-
-// Strips "*PROMO PRICE* Thursday 7PM: " style prefixes from drop-in names
-function stripDropinPrefix(name: string): string {
-  return name
-    .replace(/\*[^*]+\*\s*/g, '') // *PROMO PRICE*
-    .replace(/^\w+\s+\d+\s*(?:AM|PM)\s*:\s*/i, '') // "Thursday 7PM: "
-    .trim()
-}
-
-function extractLevel(name: string): {
-  level: string | null
-  remaining: string
-} {
-  for (const lvl of KNOWN_LEVELS) {
-    if (name.startsWith(lvl)) {
-      return { level: lvl, remaining: name.slice(lvl.length).trim() }
-    }
-  }
-  return { level: null, remaining: name }
+function findLevel(name: string) {
+  return find(KNOWN_LEVELS, (lvl) => name.includes(lvl)) ?? '---'
 }
 
 export function parseDropinName(name: string): ParsedSession {
-  const { level, remaining } = extractLevel(stripCode(stripDropinPrefix(name)))
-  const group = KNOWN_GROUPS.find((g) => remaining.includes(g)) ?? null
-  return { level, group, skill: null }
+  const level = findLevel(name)
+  const group = find(KNOWN_GROUPS, (group) => name.includes(group)) ?? '---'
+  return { level, group, skill: '' }
 }
 
 export function parseClinicName(name: string): ParsedSession {
-  const { level, remaining } = extractLevel(stripCode(name))
-  // Remove trailing number: "Serving 2" → "Serving"
-  const skill = remaining.replace(/\s+\d+$/, '').trim() || null
-  return { level, group: null, skill }
+  const level = findLevel(name)
+  const skill = find(CLINIC_SKILLS, (skill) => name.includes(skill)) ?? '---'
+  return { level, group: '', skill }
 }
 
 const LOCATION_SHORT: Record<string, string> = {

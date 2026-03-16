@@ -7,7 +7,12 @@ import Button from '~/components/Button'
 import SkeletonTable from '~/components/SkeletonTable'
 import { useSessionQuery } from '~/lib/hooks'
 import { queryClient } from '~/lib/query-client'
-import { formatSessionTime, getSessionSortKey } from '~/lib/session-name'
+import {
+  formatSessionTime,
+  getSessionSortKey,
+  parseDropinName,
+  parseClinicName,
+} from '~/lib/session-name'
 import type { SessionRecord, SessionType } from '~/types/dropin'
 
 interface LocationGroup {
@@ -20,11 +25,27 @@ interface SessionScheduleProps {
   type: SessionType
 }
 
-const COLUMNS = ['Date', 'Event', 'Spots', 'Signup']
+function getColumns(type: SessionType) {
+  return [
+    'Date',
+    'Level',
+    type === 'dropin' ? 'Group' : 'Topic',
+    'Spots',
+    'Signup',
+  ]
+}
 
 // ─── Row ──────────────────────────────────────────────────────────────────────
 
-function SessionRow({ item, even }: { item: SessionRecord; even: boolean }) {
+function SessionRow({
+  item,
+  even,
+  type,
+}: {
+  item: SessionRecord
+  even: boolean
+  type: SessionType
+}) {
   const { properties, slotsFilled } = item
   const {
     session_name,
@@ -35,13 +56,21 @@ function SessionRow({ item, even }: { item: SessionRecord; even: boolean }) {
     private_signup_link,
   } = properties
 
+  const parsed =
+    type === 'dropin'
+      ? parseDropinName(session_name)
+      : parseClinicName(session_name)
+
+  const detailLabel = type === 'dropin' ? parsed.group : parsed.skill
+
   return (
     <tr className={even ? 'bg-mist-800' : 'bg-mist-900'}>
       <td className="text-center">
         {format(parseISO(session_start_date), 'EEE MMM d')} <br />
         {formatSessionTime(session_start_hour, session_start_minute)}
       </td>
-      <td>{session_name}</td>
+      <td>{parsed.level}</td>
+      <td>{detailLabel}</td>
       <td className="text-center">
         {slotsFilled} / {session_capacity}
       </td>
@@ -60,25 +89,29 @@ interface LocationTableProps {
   locationName: string
   address: string
   sessions: SessionRecord[]
+  type: SessionType
 }
 
 function LocationTable({
   locationName,
   address,
   sessions,
+  type,
 }: LocationTableProps) {
+  const columns = getColumns(type)
   return (
     <div className="table-wrapper">
       <table className="table-fixed">
         <colgroup>
           <col className="w-1/6" />
-          <col className="w-1/2" />
-          <col className="w-1/6" />
+          <col className="w-1/4" />
+          <col className="w-1/4" />
+          <col className="w-1/8" />
           <col className="w-1/6" />
         </colgroup>
         <thead>
           <tr className="bg-mist-900">
-            <th colSpan={4} className="text-left">
+            <th colSpan={5} className="text-left">
               <h2>{locationName}</h2>
               <span className="text-md font-normal text-mist-300">
                 {address}
@@ -86,14 +119,19 @@ function LocationTable({
             </th>
           </tr>
           <tr className="bg-mist-800">
-            {COLUMNS.map((col) => (
+            {columns.map((col) => (
               <th key={col}>{col}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {sessions.map((item, index) => (
-            <SessionRow key={item.id} even={!!(index % 2)} item={item} />
+            <SessionRow
+              key={item.id}
+              even={!!(index % 2)}
+              item={item}
+              type={type}
+            />
           ))}
         </tbody>
       </table>
@@ -123,6 +161,8 @@ function Schedule({ type }: SessionScheduleProps) {
     [data]
   )
 
+  const columnCount = getColumns(type).length
+
   if (error) {
     return (
       <p>
@@ -135,9 +175,9 @@ function Schedule({ type }: SessionScheduleProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col gap-6">
-        <SkeletonTable columns={COLUMNS.length} rows={4} />
-        <SkeletonTable columns={COLUMNS.length} rows={4} />
-        <SkeletonTable columns={COLUMNS.length} rows={4} />
+        <SkeletonTable columns={columnCount} rows={4} />
+        <SkeletonTable columns={columnCount} rows={4} />
+        <SkeletonTable columns={columnCount} rows={4} />
       </div>
     )
   }
@@ -152,6 +192,7 @@ function Schedule({ type }: SessionScheduleProps) {
             locationName={name}
             address={address}
             sessions={sessions}
+            type={type}
           />
         )
       )}
