@@ -2,19 +2,13 @@ import type { VolleyballApiResponse } from '~/types/dropin'
 
 const API_BASE = 'https://data.mmao.ca/ghlLeagues/aGagGPzv1aS4v8hffakm'
 const clinicsURL = `${API_BASE}?ver=1773359594561&age=adult&program_type=clinic`
-const dropinURL = `${API_BASE}?age=adult&program_type=drop_in`
+const dropinURL = `${API_BASE}?ver=1773806118719&age=adult&program_type=drop_in`
 
 async function fetchMomentumAPI(
   url: string,
   cacheKey: string
 ): Promise<VolleyballApiResponse> {
-  const res = await fetch(url, {
-    headers: {
-      Origin: 'https://momentumvolleyball.ca',
-      Referer: 'https://momentumvolleyball.ca/',
-      'User-Agent': 'Mozilla/5.0',
-    },
-  })
+  const res = await fetch(url)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   const data = (await res.json()) as VolleyballApiResponse
   try {
