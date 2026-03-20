@@ -68,6 +68,19 @@ const LOCATION_SHORT: Record<string, string> = {
   york: 'York School',
 }
 
+const SIGNUP_FORM_IDS: Record<string, string> = {
+  drop_in: 'CSRrm8WwwV8SKWZPQA6r',
+  clinic: '8TvNKgfffWCsUdSIb3N4',
+}
+
+export function getSignupUrl(
+  sessionId: string,
+  programType: string = 'drop_in'
+): string {
+  const formId = SIGNUP_FORM_IDS[programType] ?? SIGNUP_FORM_IDS.drop_in
+  return `https://api.leadconnectorhq.com/widget/form/${formId}?leagueSessionId=${sessionId}`
+}
+
 export function shortenLocationName(name: string): string {
   const lower = name.toLowerCase()
   for (const [key, short] of Object.entries(LOCATION_SHORT)) {

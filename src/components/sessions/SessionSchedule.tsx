@@ -10,6 +10,7 @@ import { queryClient } from '~/lib/query-client'
 import {
   formatSessionTime,
   getSessionSortKey,
+  getSignupUrl,
   parseDropinName,
   parseClinicName,
 } from '~/lib/session-name'
@@ -53,7 +54,6 @@ function SessionRow({
     session_start_hour,
     session_start_minute,
     session_capacity,
-    private_signup_link,
   } = properties
 
   const parsed =
@@ -75,7 +75,17 @@ function SessionRow({
         {slotsFilled} / {session_capacity}
       </td>
       <td className="text-center">
-        <Button onClick={() => window.open(private_signup_link, '_blank')}>
+        <Button
+          onClick={() =>
+            window.open(
+              getSignupUrl(
+                item.id,
+                item.programObject.record.properties.program_type
+              ),
+              '_blank'
+            )
+          }
+        >
           Signup
         </Button>
       </td>

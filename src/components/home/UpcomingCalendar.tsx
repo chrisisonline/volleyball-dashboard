@@ -18,6 +18,7 @@ import {
   shortenLocationName,
   formatSessionTime,
   getSessionSortKey,
+  getSignupUrl,
 } from '~/lib/session-name'
 import type { SessionRecord, SessionType } from '~/types/dropin'
 
@@ -33,7 +34,6 @@ function SessionCard({ session, type }: TaggedSession) {
     session_start_hour,
     session_start_minute,
     session_capacity,
-    private_signup_link,
     session_name,
   } = session.properties
   const timeStr = formatSessionTime(session_start_hour, session_start_minute)
@@ -52,7 +52,15 @@ function SessionCard({ session, type }: TaggedSession) {
   return (
     <button
       className="w-full rounded bg-mist-700 p-1.5 text-left transition-colors hover:bg-mist-600"
-      onClick={() => window.open(private_signup_link, '_blank')}
+      onClick={() =>
+        window.open(
+          getSignupUrl(
+            session.id,
+            session.programObject.record.properties.program_type
+          ),
+          '_blank'
+        )
+      }
     >
       <div className="text-base font-bold">{timeStr}</div>
       <div className="mt-0.5 text-base text-mist-300">
