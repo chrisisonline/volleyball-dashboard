@@ -1,4 +1,4 @@
-import type { VolleyballApiResponse } from '~/types/dropin'
+import type { VolleyballApiResponse } from '~/types/momentum'
 
 const API_BASE = 'https://data.mmao.ca/ghlLeagues/aGagGPzv1aS4v8hffakm'
 const clinicsURL = `${API_BASE}?ver=1773359594561&age=adult&program_type=clinic`
@@ -10,7 +10,10 @@ async function fetchMomentumAPI(
 ): Promise<VolleyballApiResponse> {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const data = (await res.json()) as VolleyballApiResponse
+  const raw = (await res.json()) as VolleyballApiResponse
+  const data: VolleyballApiResponse = {
+    records: raw.records.filter((r) => r.properties.status !== 'inactive'),
+  }
   try {
     localStorage.setItem(cacheKey, JSON.stringify(data))
   } catch {

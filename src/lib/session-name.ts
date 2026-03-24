@@ -1,6 +1,6 @@
 import { parse, format } from 'date-fns'
 import { find } from 'lodash-es'
-import type { SessionRecord } from '~/types/dropin'
+import type { SessionRecord } from '~/types/momentum'
 
 export function formatSessionTime(hour: string, minute: string): string {
   return format(parse(`${hour}:${minute}`, 'H:m', new Date()), 'h:mm a')
@@ -43,6 +43,16 @@ const CLINIC_SKILLS = [
   'Setting',
   'Defense',
 ]
+
+export const SKILL_SHORT: Record<string, string> = {
+  'Defense & Attack Transition': 'Def & Atk',
+  'Passing & Serve Reception': 'Pass & Rec',
+  'Passing & Reception': 'Pass & Rec',
+  Attacking: 'Attacking',
+  Serving: 'Serving',
+  Setting: 'Setting',
+  Defense: 'Defense',
+}
 
 const KNOWN_GROUPS = ["Women's", "Men's", 'Co-Ed', 'Mixed'] as const
 

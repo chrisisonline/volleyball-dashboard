@@ -18,7 +18,7 @@ export interface SessionRecord {
 
 export interface SessionProperties {
   session_name: string
-  status: 'active' | 'inactive'
+  status?: 'active' | 'inactive'
   session_id: string
   session_information: string // HTML string
   currently_registered: number

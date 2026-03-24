@@ -14,7 +14,7 @@ import {
   parseDropinName,
   parseClinicName,
 } from '~/lib/session-name'
-import type { SessionRecord, SessionType } from '~/types/dropin'
+import type { SessionRecord, SessionType } from '~/types/momentum'
 
 interface LocationGroup {
   locationName: string

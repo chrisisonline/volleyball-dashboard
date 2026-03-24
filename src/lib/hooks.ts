@@ -3,8 +3,8 @@ import {
   fetchDropinSchedule,
   fetchClinicSchedule,
   getCachedSchedule,
-} from '~/lib/dropin-api'
-import type { SessionType } from '~/types/dropin'
+} from '~/lib/momentum-api'
+import type { SessionType } from '~/types/momentum'
 
 const QUERY_CONFIG = {
   dropin: { queryKey: 'dropin-schedule', queryFn: fetchDropinSchedule },
@@ -17,5 +17,6 @@ export function useSessionQuery(type: SessionType) {
     queryKey: [queryKey],
     queryFn,
     initialData: () => getCachedSchedule(queryKey),
+    initialDataUpdatedAt: 0,
   })
 }

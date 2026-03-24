@@ -15,12 +15,13 @@ import {
   parseDropinName,
   parseClinicName,
   LEVEL_SHORT,
+  SKILL_SHORT,
   shortenLocationName,
   formatSessionTime,
   getSessionSortKey,
   getSignupUrl,
 } from '~/lib/session-name'
-import type { SessionRecord, SessionType } from '~/types/dropin'
+import type { SessionRecord, SessionType } from '~/types/momentum'
 
 interface TaggedSession {
   session: SessionRecord
@@ -64,7 +65,12 @@ function SessionCard({ session, type }: TaggedSession) {
     >
       <div className="text-base font-bold">{timeStr}</div>
       <div className="mt-0.5 text-base text-mist-300">
-        {[levelLabel, parsed.group ?? parsed.skill].filter(Boolean).join(' · ')}
+        {[
+          levelLabel,
+          parsed.group || (parsed.skill ? (SKILL_SHORT[parsed.skill] ?? parsed.skill) : null),
+        ]
+          .filter(Boolean)
+          .join(' · ')}
       </div>
       <div className="mt-0.5 text-base text-mist-300">{locationLabel}</div>
       <div className="mt-1 flex items-center justify-between">
@@ -74,7 +80,7 @@ function SessionCard({ session, type }: TaggedSession) {
           {type === 'dropin' ? 'Drop In' : 'Clinic'}
         </span>
         <span
-          className={`text-sm ${spotsLeft <= 2 ? 'text-red-400' : 'text-mist-400'}`}
+          className={`text-sm ${spotsLeft === 0 ? 'text-red-400' : spotsLeft < 3 ? 'text-yellow-400' : 'text-mist-400'}`}
         >
           {session.slotsFilled}/{session_capacity}
         </span>
