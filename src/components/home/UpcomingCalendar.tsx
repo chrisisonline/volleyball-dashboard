@@ -89,6 +89,49 @@ function SessionCard({ session, type }: TaggedSession) {
   )
 }
 
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+function SkeletonCard() {
+  return (
+    <div className="w-full rounded bg-mist-700 p-1.5">
+      <div className="h-4 w-16 animate-pulse rounded bg-mist-500/50" />
+      <div className="mt-1 h-3 w-24 animate-pulse rounded bg-mist-500/50" />
+      <div className="mt-1 h-3 w-20 animate-pulse rounded bg-mist-500/50" />
+      <div className="mt-2 h-3 w-12 animate-pulse rounded bg-mist-500/50" />
+    </div>
+  )
+}
+
+function SkeletonDayCell({ day }: { day: Date }) {
+  const today = startOfDay(new Date())
+  const isToday = format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')
+  const isPast = isBefore(day, today)
+  return (
+    <div
+      className={`flex min-h-24 flex-col gap-1 rounded-lg p-2 ${isToday ? 'bg-mist-900/50 ring-1 ring-mist-500' : 'bg-mist-900'} ${isPast ? 'opacity-40' : ''}`}
+    >
+      <div className="mb-1 flex items-baseline gap-2 lg:flex-col lg:gap-0 lg:text-center">
+        <div className={`text-sm font-bold ${isToday ? 'text-white' : ''}`}>
+          {format(day, 'EEE')}{' '}
+          <span className="lg:hidden">{format(day, 'MMM d')}</span>
+          <span className="hidden lg:inline">{format(day, 'd')}</span>
+        </div>
+      </div>
+      <SkeletonCard />
+    </div>
+  )
+}
+
+function SkeletonWeek({ week }: { week: Date[] }) {
+  return (
+    <div className="grid grid-cols-1 gap-2 lg:grid-cols-7">
+      {week.map((day) => (
+        <SkeletonDayCell key={format(day, 'yyyy-MM-dd')} day={day} />
+      ))}
+    </div>
+  )
+}
+
 // ─── Day Cell ─────────────────────────────────────────────────────────────────
 
 function DayCell({ day, sessions }: { day: Date; sessions: TaggedSession[] }) {
@@ -119,12 +162,13 @@ function DayCell({ day, sessions }: { day: Date; sessions: TaggedSession[] }) {
 // ─── Calendar ─────────────────────────────────────────────────────────────────
 
 function Calendar() {
-  const { data: dropinData } = useSessionQuery('dropin')
-  const { data: clinicData } = useSessionQuery('clinic')
+  const { data: dropinData, isLoading: dropinLoading } = useSessionQuery('dropin')
+  const { data: clinicData, isLoading: clinicLoading } = useSessionQuery('clinic')
 
   const today = startOfDay(new Date())
   const weekStart = startOfWeek(today, { weekStartsOn: 1 }) // Monday
   const days = Array.from({ length: 14 }, (_, i) => addDays(weekStart, i))
+  const [week1, week2] = [days.slice(0, 7), days.slice(7)]
 
   const sessionsByDate = useMemo(() => {
     const map: Record<string, TaggedSession[]> = {}
@@ -156,7 +200,14 @@ function Calendar() {
     return map
   }, [dropinData, clinicData, weekStart])
 
-  const [week1, week2] = [days.slice(0, 7), days.slice(7)]
+  if (dropinLoading || clinicLoading) {
+    return (
+      <div className="flex flex-col gap-3">
+        <SkeletonWeek week={week1} />
+        <SkeletonWeek week={week2} />
+      </div>
+    )
+  }
 
   const renderWeek = (week: Date[]) => (
     <div className="grid grid-cols-1 gap-2 lg:grid-cols-7">

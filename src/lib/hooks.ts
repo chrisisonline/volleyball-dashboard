@@ -1,9 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import {
-  fetchDropinSchedule,
-  fetchClinicSchedule,
-  getCachedSchedule,
-} from '~/lib/momentum-api'
+import { fetchDropinSchedule, fetchClinicSchedule } from '~/lib/momentum-api'
 import type { SessionType } from '~/types/momentum'
 
 const QUERY_CONFIG = {
@@ -16,7 +12,5 @@ export function useSessionQuery(type: SessionType) {
   return useQuery({
     queryKey: [queryKey],
     queryFn,
-    initialData: () => getCachedSchedule(queryKey),
-    initialDataUpdatedAt: 0,
   })
 }
