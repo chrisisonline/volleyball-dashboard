@@ -1,6 +1,6 @@
 # Ship Skill
 
-Stage all changes, write a commit message, commit, and push to main.
+Stage all changes, write a commit message, and commit.
 
 ## Instructions
 
@@ -11,5 +11,4 @@ Stage all changes, write a commit message, commit, and push to main.
    - Line 3+: bullet points starting with `- `, one per logical change (each line under 100 chars)
 3. Stage all modified and untracked files with `git add -A`
 4. Commit using the drafted message (no Co-Authored-By trailer)
-5. Push to main with `git push origin main`
-6. Confirm success with the commit hash
+5. Confirm success with the commit hash
