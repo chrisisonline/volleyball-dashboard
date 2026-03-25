@@ -14,6 +14,7 @@ Live site: `https://chrisisonline.github.io/volleyball-dashboard`
 | Styling | Tailwind CSS 4 |
 | Dates | date-fns 4 |
 | Utils | lodash-es |
+| Icons | lucide-react |
 | Language | TypeScript (strict) |
 | Deploy | GitHub Actions → GitHub Pages on push to `main` |
 
@@ -44,7 +45,7 @@ src/
   layouts/
     Layout.astro                      # Page wrapper (Header + Sidebar + slot)
   lib/
-    momentum-api.ts                   # Momentum API fetch + localStorage cache (drop-ins + clinics)
+    momentum-api.ts                   # Momentum API fetch (drop-ins + clinics)
     query-client.ts                   # TanStack Query singleton
     session-name.ts                   # Parses level/group/skill; location shortnames; signup URLs
     hooks.ts                          # useSessionQuery(type) — TanStack Query wrapper
@@ -59,7 +60,7 @@ src/
 **Momentum Volleyball API** — `https://data.mmao.ca/ghlLeagues/aGagGPzv1aS4v8hffakm`
 - Query params: `age=adult`, `program_type=drop_in` or `program_type=clinic`
 - Required headers: `Origin: https://momentumvolleyball.ca`, `Referer`, `User-Agent`
-- Response: `{ records: SessionRecord[] }` — see `src/types/dropin.ts`
+- Response: `{ records: SessionRecord[] }` — see `src/types/momentum.ts`
 - Fetched client-side (not at build time) due to CORS/dynamic data needs
 
 ## Code style
@@ -91,15 +92,18 @@ Always follow the project's ESLint and Prettier configuration exactly when gener
 ## Custom slash commands
 - `/import-schedule` — paste raw schedule text (from league website) → parse + write to `friday-schedule.json`
 - `/validate-schedule` — fetch Momentum API and compare against local schedule for mismatches
-
-## Claude behavior preferences
-- After completing each task, report token usage as a percentage of the 200k context window (e.g. "18k / 200k context (9%)")
+- `/check-ui` — paste Momentum site content → three-way comparison against API and our rendered output
+- `/lint` — run ESLint auto-fix + Prettier on changed files, block if errors remain
+- `/ship` — stage all changes, draft commit message, and commit
+- `/update-claude-md` — scan recent commits + current files and sync CLAUDE.md
 
 ## Commands
 ```bash
 npm run dev      # local dev server
 npm run build    # production build → dist/
 npm run preview  # preview built output
-npm run lint     # ESLint
-npm run format   # Prettier
+npm run lint          # ESLint check
+npm run lint:fix      # ESLint auto-fix
+npm run format        # Prettier write
+npm run format:check  # Prettier check (no writes)
 ```
