@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
-import { QueryClientProvider } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { parseISO, format } from 'date-fns'
 import { groupBy, mapValues, sortBy, map } from 'lodash-es'
 
 import Button from '~/components/Button'
 import SkeletonTable from '~/components/SkeletonTable'
 import { useSessionQuery } from '~/lib/hooks'
-import { queryClient } from '~/lib/query-client'
+import { queryClient, persister } from '~/lib/query-client'
 import {
   formatSessionTime,
   getSessionSortKey,
@@ -40,11 +40,9 @@ function getColumns(type: SessionType) {
 
 function SessionRow({
   item,
-  even,
   type,
 }: {
   item: SessionRecord
-  even: boolean
   type: SessionType
 }) {
   const { properties, slotsFilled } = item
@@ -64,7 +62,7 @@ function SessionRow({
   const detailLabel = type === 'dropin' ? parsed.group : parsed.skill
 
   return (
-    <tr className={even ? 'bg-mist-800' : 'bg-mist-900'}>
+    <tr>
       <td className="text-center">
         {format(parseISO(session_start_date), 'EEE MMM d')} <br />
         {formatSessionTime(session_start_hour, session_start_minute)}
@@ -120,28 +118,23 @@ function LocationTable({
           <col className="w-1/6" />
         </colgroup>
         <thead>
-          <tr className="bg-mist-900">
-            <th colSpan={5} className="text-left">
+          <tr>
+            <th colSpan={5}>
               <h2>{locationName}</h2>
-              <span className="text-md font-normal text-mist-300">
+              <span className="text-sm font-normal text-mist-300">
                 {address}
               </span>
             </th>
           </tr>
-          <tr className="bg-mist-800">
+          <tr>
             {columns.map((col) => (
               <th key={col}>{col}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {sessions.map((item, index) => (
-            <SessionRow
-              key={item.id}
-              even={!!(index % 2)}
-              item={item}
-              type={type}
-            />
+          {sessions.map((item) => (
+            <SessionRow key={item.id} item={item} type={type} />
           ))}
         </tbody>
       </table>
@@ -214,8 +207,8 @@ function Schedule({ type }: SessionScheduleProps) {
 
 export default function SessionSchedule(props: SessionScheduleProps) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       <Schedule {...props} />
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }

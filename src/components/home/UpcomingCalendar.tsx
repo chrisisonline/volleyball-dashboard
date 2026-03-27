@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { QueryClientProvider } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import {
   format,
   addDays,
@@ -10,7 +10,7 @@ import {
 } from 'date-fns'
 
 import { useSessionQuery } from '~/lib/hooks'
-import { queryClient } from '~/lib/query-client'
+import { queryClient, persister } from '~/lib/query-client'
 import {
   parseDropinName,
   parseClinicName,
@@ -233,8 +233,8 @@ function Calendar() {
 
 export default function UpcomingCalendar() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       <Calendar />
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   )
 }

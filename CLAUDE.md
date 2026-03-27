@@ -17,6 +17,7 @@ Live site: `https://chrisisonline.github.io/volleyball-dashboard`
 | Icons | lucide-react |
 | Language | TypeScript (strict) |
 | Deploy | GitHub Actions → GitHub Pages on push to `main` |
+| Scraping | Puppeteer 24 (devDependency — used only by `scripts/fetch-xtsc.ts`) |
 
 ## Project structure
 ```
@@ -27,6 +28,7 @@ src/
     dropin-schedule.astro → /dropin-schedule  (drop-in sessions by location)
     clinic-schedule.astro → /clinic-schedule  (clinic sessions by location)
     scoreboard.astro      → /scoreboard    (fullscreen score counter)
+    xtsc-schedule.astro   → /xtsc-schedule (XTSC volleyball registration listings)
   components/
     Header.astro / Sidebar.astro      # Static layout (no JS shipped)
     MenuButton.tsx                    # Mobile sidebar toggle (client:load)
@@ -54,6 +56,9 @@ src/
     schedule.ts                       # Personal schedule types (Game, ScheduleItem)
   data/
     friday-schedule.json              # Hard-coded season schedule (local data)
+    xtsc-registrations.json           # Cached XTSC volleyball registration listings (refreshed via /fetch-xtsc)
+scripts/
+  fetch-xtsc.ts                       # Puppeteer scraper — writes src/data/xtsc-registrations.json
 ```
 
 ## External API
@@ -89,10 +94,17 @@ Always follow the project's ESLint and Prettier configuration exactly when gener
 - Use `/import-schedule` to convert raw pasted schedule text into this JSON format
 - Use `/validate-schedule` to cross-check local schedule against the Momentum API frontend data
 
+## XTSC registration data
+- `src/data/xtsc-registrations.json` is a cached list of open XTSC volleyball leagues — refreshed manually each season
+- Scraped from `https://www.xtsc.ca/zuluru/events/` using a headless Puppeteer browser (no public API)
+- Each entry: `{ name, section, season, day, location, price, url, eventId }`
+- Use `/fetch-xtsc` (or `npm run fetch:xtsc`) to re-scrape and overwrite the cached data
+
 ## Custom slash commands
 - `/import-schedule` — paste raw schedule text (from league website) → parse + write to `friday-schedule.json`
 - `/validate-schedule` — fetch Momentum API and compare against local schedule for mismatches
 - `/check-ui` — paste Momentum site content → three-way comparison against API and our rendered output
+- `/fetch-xtsc` — re-scrape XTSC registration events page and overwrite `xtsc-registrations.json`
 - `/lint` — run ESLint auto-fix + Prettier on changed files, block if errors remain
 - `/ship` — stage all changes, draft commit message, and commit
 - `/update-claude-md` — scan recent commits + current files and sync CLAUDE.md
@@ -106,4 +118,5 @@ npm run lint          # ESLint check
 npm run lint:fix      # ESLint auto-fix
 npm run format        # Prettier write
 npm run format:check  # Prettier check (no writes)
+npm run fetch:xtsc    # Re-scrape XTSC registration events → src/data/xtsc-registrations.json
 ```

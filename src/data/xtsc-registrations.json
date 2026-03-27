@@ -1,0 +1,112 @@
+[
+  {
+    "name": "CoEd Intermediate 2-Hour Round Robin Volleyball - Wednesdays - Spring Season",
+    "section": "2-Hour RR Downtown Volleyball - Spring",
+    "season": "Spring",
+    "day": "Wednesday",
+    "location": "East York CI / Harbord CI",
+    "price": "CA$898.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1795",
+    "eventId": "1795"
+  },
+  {
+    "name": "CoEd Intermediate 2-Hour RR Volleyball (Bathurst & Harbord) - Friday - Spring Season",
+    "section": "2-Hour RR Downtown Volleyball - Spring",
+    "season": "Spring",
+    "day": "Friday",
+    "location": "Harbord CI",
+    "price": "CA$1,011.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1796",
+    "eventId": "1796"
+  },
+  {
+    "name": "CoEd Intermediate 2-Hour RR Volleyball (Warden & Finch) - Tuesdays - Early Spring Season",
+    "section": "2-Hour RR North York Volleyball - Early Spring & Spring",
+    "season": "Early Spring",
+    "day": "Tuesday",
+    "location": "L'Amoreaux Collegiate Institute",
+    "price": "CA$1,124.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1770",
+    "eventId": "1770"
+  },
+  {
+    "name": "CoEd Intermediate 2-Hour RR Volleyball (Victoria Park & Finch) - Tuesdays - Early Spring Season",
+    "section": "2-Hour RR North York Volleyball - Early Spring & Spring",
+    "season": "Early Spring",
+    "day": "Tuesday",
+    "location": "Pleasant View",
+    "price": "CA$1,011.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1766",
+    "eventId": "1766"
+  },
+  {
+    "name": "CoEd Intermediate 2-Hour RR Volleyball (St. Clair/Ossington) - Tuesdays - Early Spring Season",
+    "section": "2-Hour RR North York Volleyball - Early Spring & Spring",
+    "season": "Early Spring",
+    "day": "Tuesday",
+    "location": "Winona Drive Senior PS",
+    "price": "CA$1,011.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1771",
+    "eventId": "1771"
+  },
+  {
+    "name": "CoEd Intermediate 2-Hour RR Volleyball (Don Mills & Finch) - Wednesdays - Early Spring Season",
+    "section": "2-Hour RR North York Volleyball - Early Spring & Spring",
+    "season": "Early Spring",
+    "day": "Wednesday",
+    "location": "Don Valley Middle School",
+    "price": "CA$1,011.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1769",
+    "eventId": "1769"
+  },
+  {
+    "name": "CoEd Intermediate 2-Hour RR Volleyball (Yonge & St. Clair) - Fridays - Early Spring Season",
+    "section": "2-Hour RR North York Volleyball - Early Spring & Spring",
+    "season": "Early Spring",
+    "day": "Friday",
+    "location": "North Toronto CI",
+    "price": "CA$1,124.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1767",
+    "eventId": "1767"
+  },
+  {
+    "name": "CoEd Intermediate 2-Hour RR Volleyball (York Mills & Leslie) - Wednesdays - Spring Season (starts 22 April)",
+    "section": "2-Hour RR North York Volleyball - Early Spring & Spring",
+    "season": "Spring",
+    "day": "Wednesday",
+    "location": "York Mills CI",
+    "price": "CA$898.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1798",
+    "eventId": "1798"
+  },
+  {
+    "name": "CoEd Intermediate 1-Hour Volleyball (College & Spadina) - Thursdays - Early Spring Season",
+    "section": "1-hr Volleyball - Early Spring & Spring",
+    "season": "Early Spring",
+    "day": "Thursday",
+    "location": "College & Spadina",
+    "price": "CA$898.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1760",
+    "eventId": "1760"
+  },
+  {
+    "name": "CoEd Intermediate 1-Hour Volleyball (College & Spadina) - Tuesdays - Spring Season",
+    "section": "1-hr Volleyball - Early Spring & Spring",
+    "season": "Spring",
+    "day": "Tuesday",
+    "location": "College & Spadina",
+    "price": "CA$898.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1797",
+    "eventId": "1797"
+  },
+  {
+    "name": "CoEd Competitive 2-Hour Round Robin Volleyball - Wednesdays - Spring Season",
+    "section": "2-hour Round Robin Competitive Volleyball - Spring",
+    "season": "Spring",
+    "day": "Wednesday",
+    "location": null,
+    "price": "CA$898.35",
+    "url": "https://www.xtsc.ca/zuluru/events/view?event=1794",
+    "eventId": "1794"
+  }
+]

@@ -10,7 +10,7 @@ export default function SkeletonTable({ columns, rows }: SkeletonTableProps) {
         <thead>
           <tr>
             {Array.from({ length: columns }).map((_, i) => (
-              <th key={i} className="bg-mist-900">
+              <th key={i}>
                 <div className="h-8 animate-pulse rounded-md bg-mist-500/50" />
               </th>
             ))}
@@ -18,7 +18,7 @@ export default function SkeletonTable({ columns, rows }: SkeletonTableProps) {
         </thead>
         <tbody>
           {Array.from({ length: rows }).map((_, rowIdx) => (
-            <tr key={rowIdx} className="even:bg-mist-700/30">
+            <tr key={rowIdx}>
               {Array.from({ length: columns }).map((_, colIdx) => (
                 <td key={colIdx}>
                   <div className="h-7 animate-pulse rounded-md bg-mist-500/50" />

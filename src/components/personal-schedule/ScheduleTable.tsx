@@ -34,8 +34,8 @@ export default function ScheduleTable({ schedule }: ScheduleProps) {
         <tbody>
           {filteredSchedule.map((item) => (
             <Fragment key={item.date}>
-              <tr className="bg-mist-900">
-                <td colSpan={3}>
+              <tr>
+                <td colSpan={3} className="font-medium text-mist-100">
                   {format(
                     parse(item.date, 'yyyy-MM-dd', new Date()),
                     'EEEE, MMMM d, yyyy'

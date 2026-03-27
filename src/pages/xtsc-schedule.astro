@@ -1,0 +1,108 @@
+---
+import Layout from '~/layouts/Layout.astro'
+import leagues from '~/data/xtsc-registrations.json'
+
+type League = {
+  name: string
+  section: string
+  season: string | null
+  day: string | null
+  location: string | null
+  price: string | null
+  url: string
+  eventId: string
+}
+
+// Group by section, then by season within each section
+const sections = Object.entries(
+  (leagues as League[]).reduce<Record<string, Record<string, League[]>>>(
+    (acc, league) => {
+      const section = league.section
+      const season = league.season ?? 'Unknown'
+      if (!acc[section]) acc[section] = {}
+      if (!acc[section][season]) acc[section][season] = []
+      acc[section][season].push(league)
+      return acc
+    },
+    {},
+  ),
+)
+
+const seasonOrder = ['Early Spring', 'Spring', 'Summer', 'Fall', 'Winter']
+const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+function sortLeagues(leagues: League[]) {
+  return leagues.sort(
+    (a, b) =>
+      dayOrder.indexOf(a.day ?? '') - dayOrder.indexOf(b.day ?? ''),
+  )
+}
+---
+
+<Layout title="XTSC Registrations">
+  <div class="mb-6 flex items-baseline justify-between">
+    <h1>XTSC Volleyball Registrations</h1>
+    <p class="text-sm text-mist-400">
+      Data cached — run <code class="rounded bg-mist-700 px-1 py-0.5 text-xs text-mist-200"
+        >npm run fetch:xtsc</code
+      > to refresh
+    </p>
+  </div>
+
+  {
+    sections.map(([sectionName, seasonMap]) => (
+      <div class="mb-8 overflow-hidden rounded-lg border border-mist-700 bg-mist-900">
+        <div class="border-b border-mist-700 px-5 py-3">
+          <h2 class="text-base font-semibold text-mist-100">{sectionName}</h2>
+        </div>
+
+        {seasonOrder
+          .filter((s) => seasonMap[s])
+          .map((season) => (
+            <div>
+              <div class="bg-mist-800/50 px-5 py-2">
+                <span class="text-xs font-semibold uppercase tracking-wide text-mist-400">
+                  {season}
+                </span>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>League</th>
+                    <th>Location</th>
+                    <th>Price</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortLeagues(seasonMap[season]).map((league) => (
+                    <tr>
+                      <td class="whitespace-nowrap font-medium text-mist-100">
+                        {league.day ?? '—'}
+                      </td>
+                      <td>{league.name}</td>
+                      <td class="whitespace-nowrap text-mist-300">
+                        {league.location ?? '—'}
+                      </td>
+                      <td class="whitespace-nowrap text-mist-300">{league.price}</td>
+                      <td>
+                        <a
+                          href={league.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="inline-flex items-center rounded-md bg-mist-700 px-6 py-2 font-semibold text-mist-100 transition-all duration-200 hover:bg-mist-600 active:scale-95"
+                        >
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+      </div>
+    ))
+  }
+</Layout>
