@@ -3,6 +3,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { parseISO, format } from 'date-fns'
 import { groupBy, mapValues, sortBy, map } from 'lodash-es'
 
+import AvailabilityMeter from '~/components/AvailabilityMeter'
 import Button from '~/components/Button'
 import SkeletonTable from '~/components/SkeletonTable'
 import { useSessionQuery } from '~/lib/hooks'
@@ -70,10 +71,16 @@ function SessionRow({
       <td>{parsed.level}</td>
       <td>{detailLabel}</td>
       <td className="text-center">
-        {slotsFilled} / {session_capacity}
+        <span className="inline-flex items-center justify-center gap-2">
+          <span>
+            {slotsFilled} / {session_capacity}
+          </span>
+          <AvailabilityMeter filled={slotsFilled} capacity={session_capacity} />
+        </span>
       </td>
       <td className="text-center">
         <Button
+          variant="primary"
           onClick={() =>
             window.open(
               getSignupUrl(
@@ -207,7 +214,10 @@ function Schedule({ type }: SessionScheduleProps) {
 
 export default function SessionSchedule(props: SessionScheduleProps) {
   return (
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+    >
       <Schedule {...props} />
     </PersistQueryClientProvider>
   )

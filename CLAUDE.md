@@ -23,8 +23,7 @@ Live site: `https://chrisisonline.github.io/volleyball-dashboard`
 ```
 src/
   pages/           # Astro file-based routes
-    index.astro          → /               (home: next game + 2-week calendar)
-    friday-schedule.astro → /friday-schedule  (season schedule table)
+    index.astro          → /               (home: 2-week drop-in + clinic calendar)
     dropin-schedule.astro → /dropin-schedule  (drop-in sessions by location)
     clinic-schedule.astro → /clinic-schedule  (clinic sessions by location)
     scoreboard.astro      → /scoreboard    (fullscreen score counter)
@@ -36,10 +35,7 @@ src/
     SkeletonTable.tsx                 # Animated loading placeholder table
     ConfirmModal.tsx                  # Centered confirmation dialog
     home/
-      NextGame.tsx                    # Next upcoming game card
       UpcomingCalendar.tsx            # 14-day calendar of drop-ins + clinics
-    personal-schedule/
-      ScheduleTable.tsx               # Full season schedule
     sessions/
       SessionSchedule.tsx             # Drop-in or clinic sessions grouped by location
     scoreboard/
@@ -53,9 +49,7 @@ src/
     hooks.ts                          # useSessionQuery(type) — TanStack Query wrapper
   types/
     momentum.ts                       # Momentum API response types (SessionRecord, SessionType, etc.)
-    schedule.ts                       # Personal schedule types (Game, ScheduleItem)
   data/
-    friday-schedule.json              # Hard-coded season schedule (local data)
     xtsc-registrations.json           # Cached XTSC volleyball registration listings (refreshed via /fetch-xtsc)
 scripts/
   fetch-xtsc.ts                       # Puppeteer scraper — writes src/data/xtsc-registrations.json
@@ -88,12 +82,6 @@ Always follow the project's ESLint and Prettier configuration exactly when gener
 - `session-name.ts` owns all session parsing: level, group, skill, location shortnames, signup URLs
 - `hooks.ts` owns all TanStack Query calls — components call `useSessionQuery(type)`, never fetch directly
 
-## Schedule data
-- `src/data/friday-schedule.json` is the local season schedule — updated manually each season
-- Format: `ScheduleItem[]` where each item is `{ date: "YYYY-MM-DD", games: [{ time, court, opponent }] }`
-- Use `/import-schedule` to convert raw pasted schedule text into this JSON format
-- Use `/validate-schedule` to cross-check local schedule against the Momentum API frontend data
-
 ## XTSC registration data
 - `src/data/xtsc-registrations.json` is a cached list of open XTSC volleyball leagues — refreshed manually each season
 - Scraped from `https://www.xtsc.ca/zuluru/events/` using a headless Puppeteer browser (no public API)
@@ -101,8 +89,6 @@ Always follow the project's ESLint and Prettier configuration exactly when gener
 - Use `/fetch-xtsc` (or `npm run fetch:xtsc`) to re-scrape and overwrite the cached data
 
 ## Custom slash commands
-- `/import-schedule` — paste raw schedule text (from league website) → parse + write to `friday-schedule.json`
-- `/validate-schedule` — fetch Momentum API and compare against local schedule for mismatches
 - `/check-ui` — paste Momentum site content → three-way comparison against API and our rendered output
 - `/fetch-xtsc` — re-scrape XTSC registration events page and overwrite `xtsc-registrations.json`
 - `/lint` — run ESLint auto-fix + Prettier on changed files, block if errors remain

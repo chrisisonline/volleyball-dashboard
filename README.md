@@ -10,9 +10,11 @@ A personal dashboard for tracking volleyball schedules, drop-in sessions, and up
 
 | Page | Description |
 |------|-------------|
-| **Home** | Shows the next upcoming Friday game |
-| **Friday Schedule** | Full season schedule for Momentum Intermediate League @ The York School |
+| **Home** | Two-week calendar of upcoming drop-in and clinic sessions |
 | **Drop-in Schedule** | Live drop-in session availability, grouped by location, fetched from the Momentum API |
+| **Clinic Schedule** | Live clinic session availability, grouped by location, fetched from the Momentum API |
+| **Scoreboard** | Fullscreen tap-to-score counter |
+| **XTSC Schedule** | Cached XTSC volleyball registration listings |
 
 ## Tech Stack
 

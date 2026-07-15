@@ -9,6 +9,7 @@ import {
   isBefore,
 } from 'date-fns'
 
+import AvailabilityMeter from '~/components/AvailabilityMeter'
 import { useSessionQuery } from '~/lib/hooks'
 import { queryClient, persister } from '~/lib/query-client'
 import {
@@ -38,7 +39,6 @@ function SessionCard({ session, type }: TaggedSession) {
     session_name,
   } = session.properties
   const timeStr = formatSessionTime(session_start_hour, session_start_minute)
-  const spotsLeft = session_capacity - session.slotsFilled
   const parsed =
     type === 'dropin'
       ? parseDropinName(session_name)
@@ -67,7 +67,8 @@ function SessionCard({ session, type }: TaggedSession) {
       <div className="mt-0.5 text-base text-mist-300">
         {[
           levelLabel,
-          parsed.group || (parsed.skill ? (SKILL_SHORT[parsed.skill] ?? parsed.skill) : null),
+          parsed.group ||
+            (parsed.skill ? (SKILL_SHORT[parsed.skill] ?? parsed.skill) : null),
         ]
           .filter(Boolean)
           .join(' · ')}
@@ -79,10 +80,14 @@ function SessionCard({ session, type }: TaggedSession) {
         >
           {type === 'dropin' ? 'Drop In' : 'Clinic'}
         </span>
-        <span
-          className={`text-sm ${spotsLeft === 0 ? 'text-red-400' : spotsLeft < 3 ? 'text-yellow-400' : 'text-mist-400'}`}
-        >
-          {session.slotsFilled}/{session_capacity}
+        <span className="flex items-center gap-1.5">
+          <span className="text-sm text-mist-400">
+            {session.slotsFilled}/{session_capacity}
+          </span>
+          <AvailabilityMeter
+            filled={session.slotsFilled}
+            capacity={session_capacity}
+          />
         </span>
       </div>
     </button>
@@ -138,11 +143,23 @@ function DayCell({ day, sessions }: { day: Date; sessions: TaggedSession[] }) {
   const today = startOfDay(new Date())
   const isToday = format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')
   const isPast = isBefore(day, today)
+  const isEmpty = sessions.length === 0
+  // Empty days shrink to a thin strip: reduced height on mobile, and
+  // `self-start` on desktop so the cell stops stretching to match the
+  // tallest day in the flex row.
+  const heightClass = isEmpty
+    ? 'min-h-12 lg:min-h-16 lg:self-start'
+    : 'min-h-24'
+  // Desktop widths: empty days take a fixed narrow column while days with
+  // sessions grow to share the remaining space. Mobile stays full-width.
+  const widthClass = isEmpty ? 'lg:w-28 lg:flex-none' : 'lg:min-w-0 lg:flex-1'
   return (
     <div
-      className={`flex min-h-24 flex-col gap-1 rounded-lg p-2 ${isToday ? 'bg-mist-900/50 ring-1 ring-mist-500' : 'bg-mist-900'} ${isPast ? 'opacity-40' : ''}`}
+      className={`flex ${heightClass} ${widthClass} flex-col gap-1 rounded-lg p-2 ${isToday ? 'bg-mist-900/50 ring-1 ring-mist-500' : 'bg-mist-900'} ${isPast ? 'opacity-40' : ''}`}
     >
-      <div className="mb-1 flex items-baseline gap-2 lg:flex-col lg:gap-0 lg:text-center">
+      <div
+        className={`flex items-baseline gap-2 lg:flex-col lg:gap-0 lg:text-center ${isEmpty ? '' : 'mb-1'}`}
+      >
         <div className={`text-sm font-bold ${isToday ? 'text-white' : ''}`}>
           {format(day, 'EEE')}{' '}
           <span className="lg:hidden">{format(day, 'MMM d')}</span>
@@ -162,8 +179,10 @@ function DayCell({ day, sessions }: { day: Date; sessions: TaggedSession[] }) {
 // ─── Calendar ─────────────────────────────────────────────────────────────────
 
 function Calendar() {
-  const { data: dropinData, isLoading: dropinLoading } = useSessionQuery('dropin')
-  const { data: clinicData, isLoading: clinicLoading } = useSessionQuery('clinic')
+  const { data: dropinData, isLoading: dropinLoading } =
+    useSessionQuery('dropin')
+  const { data: clinicData, isLoading: clinicLoading } =
+    useSessionQuery('clinic')
 
   const today = startOfDay(new Date())
   const weekStart = startOfWeek(today, { weekStartsOn: 1 }) // Monday
@@ -210,7 +229,7 @@ function Calendar() {
   }
 
   const renderWeek = (week: Date[]) => (
-    <div className="grid grid-cols-1 gap-2 lg:grid-cols-7">
+    <div className="flex flex-col gap-2 lg:flex-row lg:items-stretch">
       {week.map((day) => (
         <DayCell
           key={format(day, 'yyyy-MM-dd')}
@@ -233,7 +252,10 @@ function Calendar() {
 
 export default function UpcomingCalendar() {
   return (
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+    >
       <Calendar />
     </PersistQueryClientProvider>
   )

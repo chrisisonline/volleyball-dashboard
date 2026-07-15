@@ -1,13 +1,9 @@
 ---
-import NextGame from '~/components/home/NextGame'
 import UpcomingCalendar from '~/components/home/UpcomingCalendar'
 import Layout from '~/layouts/Layout.astro'
-import fridaySchedule from '~/data/friday-schedule.json'
 ---
 
 <Layout title="Volleyball Dashboard">
-  <h2 class="mb-4">Drop In & Clinic Schedule</h2>
+  <h1 class="mb-4">Drop In & Clinic Schedule</h1>
   <UpcomingCalendar client:only="react" />
-  <h1 class="mt-8 mb-4">Upcoming</h1>
-  <NextGame schedule={fridaySchedule} />
 </Layout>
