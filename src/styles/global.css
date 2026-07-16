@@ -30,7 +30,7 @@
   --color-mist-900: oklch(17% 0.006 252);
 
   /* Page canvas — a dark grey, lighter than the header/sidebar chrome. */
-  --color-ink: oklch(21% 0.006 252);
+  --color-ink: oklch(16.613% 0.00327 197.163);
 
   /* Structural white hairlines and subtle grey dividers. */
   --color-line: oklch(100% 0 0 / 0.7);

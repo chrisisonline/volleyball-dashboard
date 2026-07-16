@@ -42,7 +42,7 @@ function ScoreCounter() {
   }, [])
 
   return (
-    <div className="relative flex h-dvh w-screen bg-neutral-900 text-white select-none">
+    <div className="relative flex h-dvh w-screen bg-(--color-ink) text-white select-none">
       {showResetModal && (
         <ConfirmModal
           message="Reset both scores to 0?"
@@ -74,17 +74,17 @@ function ScoreCounter() {
         score={scores[0]}
         onIncrement={() => adjust(0, 1)}
         onDecrement={() => adjust(0, -1)}
-        bgClass="bg-cyan-900"
-        activeBgClass="active:bg-cyan-600"
+        bgClass="bg-teal-500"
+        activeBgClass="active:bg-teal-400"
       />
-      <div className="w-1 bg-neutral-900" />
+      <div className="w-1 bg-(--color-ink)" />
       <TeamPanel
         label="Away"
         score={scores[1]}
         onIncrement={() => adjust(1, 1)}
         onDecrement={() => adjust(1, -1)}
-        bgClass="bg-yellow-800"
-        activeBgClass="active:bg-yellow-600"
+        bgClass="bg-orange-500"
+        activeBgClass="active:bg-orange-400"
       />
     </div>
   )
@@ -110,16 +110,16 @@ function TeamPanel({
       className={`flex flex-1 flex-col items-center justify-between pt-6 pb-4 ${bgClass}`}
     >
       {/* Label */}
-      <div className="text-lg font-bold tracking-widest text-white/80 uppercase">
+      <div className="text-lg font-bold tracking-widest text-black/60 uppercase">
         {label}
       </div>
 
       {/* Score — contained increment button */}
       <button
         onClick={onIncrement}
-        className={`rounded-2xl px-15 py-5 ${bgClass} ${activeBgClass} ring-4 ring-white/20 transition-colors active:ring-white/40`}
+        className={`rounded-none px-15 py-5 ${bgClass} ${activeBgClass} ring-4 ring-black/15 transition-colors active:ring-black/30`}
       >
-        <span className="text-[min(50vw,50vh)] leading-none font-black text-white tabular-nums drop-shadow-lg">
+        <span className="text-[min(50vw,50vh)] leading-none font-black text-black/85 tabular-nums">
           {score}
         </span>
       </button>

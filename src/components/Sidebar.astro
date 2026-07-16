@@ -12,16 +12,16 @@ const currentPath = Astro.url.pathname
 
 // Define classes for the link states, now permanently dark
 const baseClasses =
-  'block p-4 transition-colors duration-200 rounded-md m-4 font-semibold'
-const inactiveClasses = 'text-mist-300 hover:bg-teal-900/50 hover:text-white'
-const activeClasses = 'bg-teal-900 text-mist-100'
+  'block px-4 py-2.5 text-base transition-colors duration-200'
+const inactiveClasses = 'text-mist-400 hover:bg-mist-800 hover:text-mist-100'
+const activeClasses = 'bg-mist-700 text-mist-100'
 ---
 
 <aside
   id="sidebar"
-  class="fixed top-0 bottom-0 left-0 z-20 mt-16 h-screen w-64 -translate-x-full transform bg-mist-900 text-mist-100 transition-transform duration-300 ease-in-out md:translate-x-0"
+  class="fixed top-0 bottom-0 left-0 z-20 mt-16 h-screen w-56 -translate-x-full transform border-r border-(--color-line) bg-(--color-ink) text-mist-100 transition-transform duration-300 ease-in-out md:translate-x-0"
 >
-  <nav class="mt-6">
+  <nav class="flex flex-col">
     {
       navLinks.map((link) => {
         const isActive =

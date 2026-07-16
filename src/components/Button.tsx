@@ -7,7 +7,6 @@ interface ButtonProps {
   className?: string
   icon?: LucideIcon
   href?: string
-  variant?: 'default' | 'primary'
 }
 
 export default function Button({
@@ -17,13 +16,11 @@ export default function Button({
   className,
   icon: Icon,
   href,
-  variant = 'default',
 }: ButtonProps) {
+  // Square, thin-bordered grey button: light-grey fill, lightening on hover/active.
   const variantClass =
-    variant === 'primary'
-      ? 'bg-teal-700 hover:bg-teal-600'
-      : 'bg-mist-700 hover:bg-mist-600'
-  const baseClass = `inline-flex items-center gap-2 rounded-md ${variantClass} px-6 py-2 font-semibold text-mist-100 transition-all duration-200 active:scale-95${className ? ` ${className}` : ''}`
+    'border border-mist-600 bg-mist-800 text-mist-100 hover:bg-mist-700 active:bg-mist-600'
+  const baseClass = `inline-flex items-center gap-2 rounded-none border-solid ${variantClass} px-6 py-2 font-semibold transition-all duration-200 active:scale-95${className ? ` ${className}` : ''}`
   const content = (
     <>
       {Icon && <Icon size={20} absoluteStrokeWidth strokeWidth={2} />}

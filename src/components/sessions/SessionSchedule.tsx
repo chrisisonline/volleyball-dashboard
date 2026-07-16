@@ -80,7 +80,6 @@ function SessionRow({
       </td>
       <td className="text-center">
         <Button
-          variant="primary"
           onClick={() =>
             window.open(
               getSignupUrl(

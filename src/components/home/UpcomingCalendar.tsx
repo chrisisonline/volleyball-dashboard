@@ -50,9 +50,13 @@ function SessionCard({ session, type }: TaggedSession) {
     session.locationObject?.record?.properties?.location_name ?? ''
   )
 
+  const categoryColor =
+    type === 'dropin' ? 'var(--color-dropin)' : 'var(--color-clinic)'
+
   return (
     <button
-      className="w-full rounded bg-mist-700 p-1.5 text-left transition-colors hover:bg-mist-600"
+      className="w-full border-t-2 bg-mist-800 p-2 text-left transition-colors hover:bg-mist-700"
+      style={{ borderTopColor: categoryColor }}
       onClick={() =>
         window.open(
           getSignupUrl(
@@ -64,7 +68,7 @@ function SessionCard({ session, type }: TaggedSession) {
       }
     >
       <div className="text-base font-bold">{timeStr}</div>
-      <div className="mt-0.5 text-base text-mist-300">
+      <div className="mt-0.5 text-sm text-mist-300">
         {[
           levelLabel,
           parsed.group ||
@@ -73,10 +77,11 @@ function SessionCard({ session, type }: TaggedSession) {
           .filter(Boolean)
           .join(' · ')}
       </div>
-      <div className="mt-0.5 text-base text-mist-300">{locationLabel}</div>
-      <div className="mt-1 flex items-center justify-between">
+      <div className="mt-0.5 text-sm text-mist-400">{locationLabel}</div>
+      <div className="mt-2 flex items-center justify-between">
         <span
-          className={`rounded px-1 text-sm font-bold ${type === 'dropin' ? 'bg-cyan-900' : 'bg-indigo-800'}`}
+          className="rounded-sm px-1.5 py-0.5 text-xs font-bold tracking-wide text-mist-900 uppercase"
+          style={{ backgroundColor: categoryColor }}
         >
           {type === 'dropin' ? 'Drop In' : 'Clinic'}
         </span>
@@ -153,9 +158,15 @@ function DayCell({ day, sessions }: { day: Date; sessions: TaggedSession[] }) {
   // Desktop widths: empty days take a fixed narrow column while days with
   // sessions grow to share the remaining space. Mobile stays full-width.
   const widthClass = isEmpty ? 'lg:w-28 lg:flex-none' : 'lg:min-w-0 lg:flex-1'
+  // Only days with events get an outlined box; empty days blend into the canvas.
+  // Negative margins pull the box borders onto the week row's top/bottom rules
+  // and onto the neighbouring day's border so overlaps collapse to a single line.
+  const borderClass = isEmpty
+    ? ''
+    : '-my-px -ml-px border border-[var(--color-line-subtle)]'
   return (
     <div
-      className={`flex ${heightClass} ${widthClass} flex-col gap-1 rounded-lg p-2 ${isToday ? 'bg-mist-900/50 ring-1 ring-mist-500' : 'bg-mist-900'} ${isPast ? 'opacity-40' : ''}`}
+      className={`flex ${heightClass} ${widthClass} ${borderClass} flex-col gap-1 p-2 ${isToday ? 'bg-mist-800/50 ring-1 ring-mist-400' : ''} ${isPast ? 'opacity-40' : ''}`}
     >
       <div
         className={`flex items-baseline gap-2 lg:flex-col lg:gap-0 lg:text-center ${isEmpty ? '' : 'mb-1'}`}
@@ -221,7 +232,7 @@ function Calendar() {
 
   if (dropinLoading || clinicLoading) {
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         <SkeletonWeek week={week1} />
         <SkeletonWeek week={week2} />
       </div>
@@ -229,7 +240,7 @@ function Calendar() {
   }
 
   const renderWeek = (week: Date[]) => (
-    <div className="flex flex-col gap-2 lg:flex-row lg:items-stretch">
+    <div className="-mt-px flex flex-col border-y border-(--color-line-subtle) lg:flex-row lg:items-stretch">
       {week.map((day) => (
         <DayCell
           key={format(day, 'yyyy-MM-dd')}
@@ -241,7 +252,7 @@ function Calendar() {
   )
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col">
       {renderWeek(week1)}
       {renderWeek(week2)}
     </div>
