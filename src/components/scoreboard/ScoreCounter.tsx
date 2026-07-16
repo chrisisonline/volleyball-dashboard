@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { ArrowLeft, Maximize, Minimize, RotateCcw } from 'lucide-react'
 import Button from '~/components/Button'
 import ConfirmModal from '~/components/ConfirmModal'
+import { createBurst, type BurstParticle } from '~/lib/celebration'
 
 const btnClass = 'bg-mist-800'
 
@@ -105,6 +107,17 @@ function TeamPanel({
   bgClass: string
   activeBgClass: string
 }) {
+  const [bursts, setBursts] = useState<BurstParticle[]>([])
+
+  const handleIncrement = useCallback(() => {
+    onIncrement()
+    setBursts((prev) => [...prev, ...createBurst(5)])
+  }, [onIncrement])
+
+  const removeBurst = useCallback((id: number) => {
+    setBursts((prev) => prev.filter((b) => b.id !== id))
+  }, [])
+
   return (
     <div
       className={`flex flex-1 flex-col items-center justify-between pt-6 pb-4 ${bgClass}`}
@@ -115,14 +128,38 @@ function TeamPanel({
       </div>
 
       {/* Score — contained increment button */}
-      <button
-        onClick={onIncrement}
-        className={`rounded-none px-15 py-5 ${bgClass} ${activeBgClass} ring-4 ring-black/15 transition-colors active:ring-black/30`}
-      >
-        <span className="text-[min(50vw,50vh)] leading-none font-black text-black/85 tabular-nums">
-          {score}
-        </span>
-      </button>
+      <div className="relative flex items-center justify-center">
+        <button
+          onClick={handleIncrement}
+          className={`rounded-none px-15 py-5 ${bgClass} ${activeBgClass} ring-4 ring-black/15 transition-colors active:ring-black/30`}
+        >
+          <span className="text-[min(50vw,50vh)] leading-none font-black text-black/85 tabular-nums">
+            {score}
+          </span>
+        </button>
+
+        {/* Celebration emoji burst */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          {bursts.map((b) => (
+            <motion.span
+              key={b.id}
+              className="absolute text-6xl sm:text-7xl"
+              initial={{ opacity: 0, scale: 0.2, x: 0, y: 0, rotate: 0 }}
+              animate={{
+                opacity: [0, 1, 1, 0],
+                scale: [0.2, b.scale * 1.3, b.scale, b.scale * 0.9],
+                x: b.x,
+                y: b.y,
+                rotate: b.rotate,
+              }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              onAnimationComplete={() => removeBurst(b.id)}
+            >
+              {b.emoji}
+            </motion.span>
+          ))}
+        </div>
+      </div>
 
       {/* Decrement button */}
       <Button onClick={onDecrement} className="bg-mist-800">
