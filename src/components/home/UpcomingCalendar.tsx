@@ -101,24 +101,34 @@ function SessionCard({ session, type }: TaggedSession) {
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
+// Square placeholder bar — mirrors the sharp-cornered look of the real UI.
+function Bar({ className }: { className?: string }) {
+  return <div className={`animate-pulse bg-mist-500/50 ${className ?? ''}`} />
+}
+
+// Mirrors SessionCard: top accent border, mist-800 fill, square corners.
 function SkeletonCard() {
   return (
-    <div className="w-full rounded bg-mist-700 p-1.5">
-      <div className="h-4 w-16 animate-pulse rounded bg-mist-500/50" />
-      <div className="mt-1 h-3 w-24 animate-pulse rounded bg-mist-500/50" />
-      <div className="mt-1 h-3 w-20 animate-pulse rounded bg-mist-500/50" />
-      <div className="mt-2 h-3 w-12 animate-pulse rounded bg-mist-500/50" />
+    <div className="w-full border-t-2 border-mist-600 bg-mist-800 p-2">
+      <Bar className="h-4 w-14" />
+      <Bar className="mt-1 h-3 w-24" />
+      <Bar className="mt-1 h-3 w-20" />
+      <div className="mt-2 flex items-center justify-between">
+        <Bar className="h-4 w-14" />
+        <Bar className="h-3 w-10" />
+      </div>
     </div>
   )
 }
 
+// Mirrors the populated DayCell: bordered square cell with collapsing borders.
 function SkeletonDayCell({ day }: { day: Date }) {
   const today = startOfDay(new Date())
   const isToday = format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')
   const isPast = isBefore(day, today)
   return (
     <div
-      className={`flex min-h-24 flex-col gap-1 rounded-lg p-2 ${isToday ? 'bg-mist-900/50 ring-1 ring-mist-500' : 'bg-mist-900'} ${isPast ? 'opacity-40' : ''}`}
+      className={`-my-px -ml-px flex min-h-24 flex-col gap-1 border border-[var(--color-line-subtle)] p-2 lg:min-w-0 lg:flex-1 ${isToday ? 'bg-mist-800/50 ring-1 ring-mist-400' : ''} ${isPast ? 'opacity-40' : ''}`}
     >
       <div className="mb-1 flex items-baseline gap-2 lg:flex-col lg:gap-0 lg:text-center">
         <div className={`text-sm font-bold ${isToday ? 'text-white' : ''}`}>
@@ -132,9 +142,10 @@ function SkeletonDayCell({ day }: { day: Date }) {
   )
 }
 
+// Mirrors renderWeek: full-width rows on mobile, a bordered strip on desktop.
 function SkeletonWeek({ week }: { week: Date[] }) {
   return (
-    <div className="grid grid-cols-1 gap-2 lg:grid-cols-7">
+    <div className="-mt-px flex flex-col border-y border-(--color-line-subtle) lg:flex-row lg:items-stretch">
       {week.map((day) => (
         <SkeletonDayCell key={format(day, 'yyyy-MM-dd')} day={day} />
       ))}
