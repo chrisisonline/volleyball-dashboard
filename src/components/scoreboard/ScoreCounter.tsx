@@ -76,8 +76,8 @@ function ScoreCounter() {
         score={scores[0]}
         onIncrement={() => adjust(0, 1)}
         onDecrement={() => adjust(0, -1)}
-        bgClass="bg-teal-500"
-        activeBgClass="active:bg-teal-400"
+        bgClass="bg-teal-800"
+        activeBgClass="active:bg-teal-700"
       />
       <div className="w-1 bg-(--color-ink)" />
       <TeamPanel
@@ -85,8 +85,8 @@ function ScoreCounter() {
         score={scores[1]}
         onIncrement={() => adjust(1, 1)}
         onDecrement={() => adjust(1, -1)}
-        bgClass="bg-orange-500"
-        activeBgClass="active:bg-orange-400"
+        bgClass="bg-orange-800"
+        activeBgClass="active:bg-orange-700"
       />
     </div>
   )
@@ -123,7 +123,7 @@ function TeamPanel({
       className={`flex flex-1 flex-col items-center justify-between pt-6 pb-4 ${bgClass}`}
     >
       {/* Label */}
-      <div className="text-lg font-bold tracking-widest text-black/60 uppercase">
+      <div className="text-lg font-bold tracking-widest text-white/70 uppercase">
         {label}
       </div>
 
@@ -131,9 +131,9 @@ function TeamPanel({
       <div className="relative flex items-center justify-center">
         <button
           onClick={handleIncrement}
-          className={`rounded-none px-15 py-5 ${bgClass} ${activeBgClass} ring-4 ring-black/15 transition-colors active:ring-black/30`}
+          className={`rounded-full px-15 py-5 ${bgClass} ${activeBgClass} ring-4 ring-white/0 transition active:ring-white/70`}
         >
-          <span className="text-[min(50vw,50vh)] leading-none font-black text-black/85 tabular-nums">
+          <span className="text-[min(50vw,50vh)] leading-none font-black text-white tabular-nums">
             {score}
           </span>
         </button>
