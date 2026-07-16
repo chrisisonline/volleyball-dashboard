@@ -1,11 +1,13 @@
 import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Maximize, Minimize, RotateCcw } from 'lucide-react'
-import Button from '~/components/Button'
 import ConfirmModal from '~/components/ConfirmModal'
 import { createBurst, type BurstParticle } from '~/lib/celebration'
 
-const btnClass = 'bg-mist-800'
+// Shared look for every scoreboard control: circular, translucent grey fill,
+// with a lighter translucent border so the rim reads brighter than the fill.
+const controlBtn =
+  'flex items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition hover:bg-white/20 active:scale-95'
 
 function ScoreCounter() {
   const [scores, setScores] = useState([0, 0])
@@ -54,21 +56,27 @@ function ScoreCounter() {
         />
       )}
       {/* Floating buttons */}
-      <Button
+      <a
         href={import.meta.env.BASE_URL}
-        icon={ArrowLeft}
-        className={`absolute top-2 left-2 z-10 ${btnClass}`}
-      />
-      <Button
+        aria-label="Back to home"
+        className={`absolute top-3 left-3 z-10 size-14 ${controlBtn}`}
+      >
+        <ArrowLeft size={26} />
+      </a>
+      <button
         onClick={reset}
-        icon={RotateCcw}
-        className={`absolute top-2 left-1/2 z-10 -translate-x-1/2 ${btnClass}`}
-      />
-      <Button
+        aria-label="Reset scores"
+        className={`absolute top-3 left-1/2 z-10 size-14 -translate-x-1/2 ${controlBtn}`}
+      >
+        <RotateCcw size={26} />
+      </button>
+      <button
         onClick={toggleFullscreen}
-        icon={isFullscreen ? Minimize : Maximize}
-        className={`absolute top-2 right-2 z-10 ${btnClass}`}
-      />
+        aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+        className={`absolute top-3 right-3 z-10 size-14 ${controlBtn}`}
+      >
+        {isFullscreen ? <Minimize size={26} /> : <Maximize size={26} />}
+      </button>
 
       {/* Score panels */}
       <TeamPanel
@@ -76,8 +84,8 @@ function ScoreCounter() {
         score={scores[0]}
         onIncrement={() => adjust(0, 1)}
         onDecrement={() => adjust(0, -1)}
-        bgClass="bg-teal-800"
-        activeBgClass="active:bg-teal-700"
+        bgClass="bg-blue-800"
+        activeBgClass="active:bg-blue-700"
       />
       <div className="w-1 bg-(--color-ink)" />
       <TeamPanel
@@ -85,8 +93,8 @@ function ScoreCounter() {
         score={scores[1]}
         onIncrement={() => adjust(1, 1)}
         onDecrement={() => adjust(1, -1)}
-        bgClass="bg-orange-800"
-        activeBgClass="active:bg-orange-700"
+        bgClass="bg-red-800"
+        activeBgClass="active:bg-red-700"
       />
     </div>
   )
@@ -131,9 +139,9 @@ function TeamPanel({
       <div className="relative flex items-center justify-center">
         <button
           onClick={handleIncrement}
-          className={`rounded-full px-15 py-5 ${bgClass} ${activeBgClass} ring-4 ring-white/0 transition active:ring-white/70`}
+          className={`flex size-[66vmin] items-center justify-center rounded-full ${bgClass} ${activeBgClass} transition active:ring-white/70`}
         >
-          <span className="text-[min(50vw,50vh)] leading-none font-black text-white tabular-nums">
+          <span className="font-(family-name:--font-score) text-[45vmin] leading-none font-bold text-white tabular-nums">
             {score}
           </span>
         </button>
@@ -162,9 +170,13 @@ function TeamPanel({
       </div>
 
       {/* Decrement button */}
-      <Button onClick={onDecrement} className="bg-mist-800">
-        &minus; 1
-      </Button>
+      <button
+        onClick={onDecrement}
+        aria-label="Subtract one point"
+        className={`size-19 text-2xl font-semibold ${controlBtn}`}
+      >
+        &minus;1
+      </button>
     </div>
   )
 }

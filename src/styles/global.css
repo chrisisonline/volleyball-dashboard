@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 @import 'tailwindcss';
 
 /* ─── Design tokens (Phase 1 foundation) ──────────────────────────────────────
@@ -8,6 +8,7 @@
 :root {
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-score: 'Oswald', ui-sans-serif, system-ui, sans-serif;
 
   /* Sharp, minimal corners — override Tailwind's radius scale globally. */
   --radius-sm: 2px;
