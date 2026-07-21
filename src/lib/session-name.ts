@@ -38,20 +38,24 @@ const CLINIC_SKILLS = [
   'Defense & Attack Transition',
   'Passing & Serve Reception',
   'Passing & Reception',
+  'Passing',
   'Attacking',
   'Serving',
   'Setting',
   'Defense',
+  'Power Skills',
 ]
 
 export const SKILL_SHORT: Record<string, string> = {
   'Defense & Attack Transition': 'Def & Atk',
   'Passing & Serve Reception': 'Pass & Rec',
   'Passing & Reception': 'Pass & Rec',
+  Passing: 'Passing',
   Attacking: 'Attacking',
   Serving: 'Serving',
   Setting: 'Setting',
   Defense: 'Defense',
+  'Power Skills': 'Power Skills',
 }
 
 const KNOWN_GROUPS = ["Women's", "Men's", 'Co-Ed', 'Mixed'] as const

@@ -128,7 +128,7 @@ function SkeletonDayCell({ day }: { day: Date }) {
   const isPast = isBefore(day, today)
   return (
     <div
-      className={`-my-px -ml-px flex min-h-24 flex-col gap-1 border border-[var(--color-line-subtle)] p-2 lg:min-w-0 lg:flex-1 ${isToday ? 'bg-mist-800/50 ring-1 ring-mist-400' : ''} ${isPast ? 'opacity-40' : ''}`}
+      className={`-my-px -ml-px flex min-h-24 flex-col gap-1 border border-(--color-line-subtle) p-2 lg:max-w-45 lg:min-w-0 lg:flex-1 ${isToday ? 'bg-mist-800/50 ring-1 ring-mist-400' : ''} ${isPast ? 'opacity-40' : ''}`}
     >
       <div className="mb-1 flex items-baseline gap-2 lg:flex-col lg:gap-0 lg:text-center">
         <div className={`text-sm font-bold ${isToday ? 'text-white' : ''}`}>
@@ -160,18 +160,15 @@ function DayCell({ day, sessions }: { day: Date; sessions: TaggedSession[] }) {
   const isToday = format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')
   const isPast = isBefore(day, today)
   const isEmpty = sessions.length === 0
-  // Empty days shrink to a thin strip: reduced height on mobile, and
-  // `self-start` on desktop so the cell stops stretching to match the
-  // tallest day in the flex row.
   const heightClass = isEmpty
     ? 'min-h-12 lg:min-h-16 lg:self-start'
     : 'min-h-24'
-  // Desktop widths: empty days take a fixed narrow column while days with
-  // sessions grow to share the remaining space. Mobile stays full-width.
-  const widthClass = isEmpty ? 'lg:w-28 lg:flex-none' : 'lg:min-w-0 lg:flex-1'
-  // Only days with events get an outlined box; empty days blend into the canvas.
-  // Negative margins pull the box borders onto the week row's top/bottom rules
-  // and onto the neighbouring day's border so overlaps collapse to a single line.
+  // Event days grow first (high grow weight) up to their max width; empty days
+  // grow only with the leftover space, so they stay thin on normal screens but
+  // stretch out to fill the row's right-side gutter on wide screens.
+  const widthClass = isEmpty
+    ? 'lg:w-28 lg:grow'
+    : 'lg:min-w-0 lg:max-w-72 lg:grow-[99] lg:basis-0'
   const borderClass = isEmpty
     ? ''
     : '-my-px -ml-px border border-[var(--color-line-subtle)]'
