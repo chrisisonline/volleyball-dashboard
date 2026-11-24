@@ -1,6 +1,6 @@
 # Volleyball Scoreboard
 
-A fullscreen two-team scoreboard. SvelteKit 2 and Svelte 5, prerendered as a static site and deployed to Cloudflare Pages (project `volleyball-scoreboard`) at the domain root.
+A fullscreen two-team scoreboard. SvelteKit 2 and Svelte 5, prerendered as a static site and deployed as the Cloudflare Worker `vb` (static assets from `build/`, configured in `wrangler.jsonc`) at https://vb.chrisisonline.workers.dev.
 
 This app is independent of the Astro dashboard in the repo root. It has its own dependencies, lint and format config, tests, and deploy workflow (`.github/workflows/scoreboard.yml`), which runs on pushes to `main` that touch `scoreboard/`.
 
