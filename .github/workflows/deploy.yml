@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    # The scoreboard/ app deploys on its own (scoreboard.yml).
+    paths-ignore:
+      - 'scoreboard/**'
+      - '.github/workflows/scoreboard.yml'
 
   # Allow running manually from the Actions tab
   workflow_dispatch:

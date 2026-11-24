@@ -5,6 +5,17 @@ A personal volleyball app, deployed as a static site to GitHub Pages. Right now 
 
 Live site: `https://chrisisonline.github.io/volleyball-dashboard`
 
+The scoreboard in `src/` (`index.astro`, `ScoreCounter.tsx` and its helpers, `tests/scoreboard.spec.ts`) is legacy. It stays live until the Svelte rewrite in `scoreboard/` ships, then gets retired. Fix bugs there only if they block play; put new scoreboard work in `scoreboard/`.
+
+## `scoreboard/` subproject
+A standalone scoreboard app with its own URL and deploy. It shares nothing with the Astro app: separate `package.json`/lockfile, ESLint, Prettier, tsconfig and Playwright config. The root lint, format, tsconfig and tests ignore it.
+
+- Stack: SvelteKit 2 + Svelte 5 (runes), `@sveltejs/adapter-static` (prerendered, client-rendered, served at the domain root), scoped component `<style>`, `@lucide/svelte` icons, Web Animations API for the burst. No React, Tailwind or framer-motion.
+- State: `scoreboard/src/lib/scoreboard.svelte.ts` (`Scoreboard` class: score tuple, rotated flag, derived layout). Fullscreen in `fullscreen.svelte.ts`.
+- Deploy: Cloudflare Worker `volleyball-scoreboard` serving `build/` as static assets (`scoreboard/wrangler.jsonc`), via `.github/workflows/scoreboard.yml` (lint, check, Playwright, then `wrangler deploy`) on pushes to `main` touching `scoreboard/`. Needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets. `deploy.yml` ignores those paths. URL: TBD (`volleyball-scoreboard.<subdomain>.workers.dev`).
+- Commands (run in `scoreboard/`): `npm run dev`, `npm run build`, `npm run preview`, `npm run check` (svelte-check), `npm run lint` (Prettier check + ESLint), `npm run format`, `npm test` (Playwright on port 4331, same device projects as the root).
+- The Stop hook also runs `npm run lint && npm run check && npm test` in `scoreboard/` when it has uncommitted changes, with its own stamp (`.claude/.last-green-scoreboard`).
+
 ## Tech stack
 | | |
 |---|---|
@@ -42,6 +53,7 @@ src/
     use-media-query.ts                # matchMedia hook (orientation etc.)
 tests/
   scoreboard.spec.ts                  # Playwright e2e tests
+scoreboard/                           # Standalone SvelteKit scoreboard (own deps, config, tests, deploy)
 archive/                              # Retired code. Excluded from build, tsc, ESLint, Prettier.
   momentum/                           # Old Momentum drop-in/clinic API integration (API changed; dead)
   xtsc/                               # XTSC registration page + Puppeteer scraper

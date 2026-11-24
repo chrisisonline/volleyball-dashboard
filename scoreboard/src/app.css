@@ -1,0 +1,74 @@
+:root {
+  --font-body: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-score: 'Oswald', ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: oklch(16.613% 0.00327 197.163);
+  --color-mist-600: oklch(40% 0.012 248);
+  --color-mist-700: oklch(31% 0.01 250);
+  --color-mist-900: oklch(17% 0.006 252);
+
+  --color-home: oklch(42.4% 0.199 265.638);
+  --color-home-active: oklch(48.8% 0.243 264.376);
+  --color-away: oklch(44.4% 0.177 26.899);
+  --color-away-active: oklch(50.5% 0.213 27.518);
+  --color-danger: oklch(57.7% 0.245 27.325);
+  --color-danger-active: oklch(63.7% 0.237 25.331);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* The page itself never scrolls, and iOS can't rubber-band it either. */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background: oklch(20.5% 0 0);
+  color: white;
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* Shared look for every scoreboard control: circular, translucent grey fill,
+   with a lighter translucent border so the rim reads brighter than the fill. */
+.control {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.1);
+  color: white;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    background-color 150ms,
+    scale 150ms;
+}
+
+.control:hover {
+  background: rgb(255 255 255 / 0.2);
+}
+
+/* `scale`, not `transform`, so it composes with a control's own `translate`. */
+.control:active {
+  scale: 0.95;
+}
