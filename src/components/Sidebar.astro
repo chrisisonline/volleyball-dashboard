@@ -1,18 +1,12 @@
 ---
 // An array of navigation link objects. This makes it easy to add or remove links.
 const base = import.meta.env.BASE_URL.replace(/\/$/, '')
-const navLinks = [
-  { href: `${base}/`, text: 'Home' },
-  { href: `${base}/dropin-schedule`, text: 'Drop In Schedule' },
-  { href: `${base}/clinic-schedule`, text: 'Clinic Schedule' },
-  { href: `${base}/scoreboard`, text: 'Scoreboard' },
-]
+const navLinks = [{ href: `${base}/`, text: 'Scoreboard' }]
 
 const currentPath = Astro.url.pathname
 
 // Define classes for the link states, now permanently dark
-const baseClasses =
-  'block px-4 py-2.5 text-base transition-colors duration-200'
+const baseClasses = 'block px-4 py-2.5 text-base transition-colors duration-200'
 const inactiveClasses = 'text-mist-400 hover:bg-mist-800 hover:text-mist-100'
 const activeClasses = 'bg-mist-700 text-mist-100'
 ---

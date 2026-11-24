@@ -11,7 +11,7 @@ import prettierConfig from "eslint-config-prettier";
 export default [
   // ─── Global ignores ───────────────────────────────────────────────────────
   {
-    ignores: ["dist/", ".astro/", "node_modules/"],
+    ignores: ["dist/", ".astro/", "node_modules/", "archive/"],
   },
 
   // ─── TypeScript files (.ts, .tsx) ─────────────────────────────────────────

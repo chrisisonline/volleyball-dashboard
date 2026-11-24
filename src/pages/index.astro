@@ -1,9 +1,69 @@
 ---
-import UpcomingCalendar from '~/components/home/UpcomingCalendar'
-import Layout from '~/layouts/Layout.astro'
+import ScoreCounter from '~/components/scoreboard/ScoreCounter'
+import '~/styles/global.css'
 ---
 
-<Layout title="Volleyball Dashboard">
-  <h1 class="mb-4">Drop In & Clinic Schedule</h1>
-  <UpcomingCalendar client:only="react" />
-</Layout>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Volleyball Scoreboard" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏐</text></svg>"
+    />
+    <!-- iPhone Safari has no fullscreen API; added to the home screen it
+         launches chrome-free instead. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Scoreboard" />
+    <title>Scoreboard</title>
+  </head>
+  <body class="bg-neutral-900!">
+    <ScoreCounter client:load />
+  </body>
+</html>
+
+<style is:global>
+  /* The page itself never scrolls, and iOS can't rubber-band it either. */
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  /* Pinned to the viewport edges (no viewport units, so pre-15.4 Safari
+     sizes it too). Padding keeps content clear of the notch and home bar. */
+  .scoreboard {
+    position: fixed;
+    inset: 0;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  /* Rotated: laid out at the swapped viewport size, then turned 90° about
+     its top-left corner, which sits on the viewport's top-right corner. Each
+     board edge lands on a different screen edge, so the insets shift too. */
+  .scoreboard[data-rotated] {
+    inset: auto;
+    top: 0;
+    left: 100%;
+    width: 100vh;
+    width: 100dvh;
+    height: 100vw;
+    height: 100dvw;
+    transform-origin: top left;
+    transform: rotate(90deg);
+    padding: env(safe-area-inset-right) env(safe-area-inset-bottom)
+      env(safe-area-inset-left) env(safe-area-inset-top);
+  }
+</style>

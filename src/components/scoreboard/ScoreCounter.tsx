@@ -1,18 +1,23 @@
 import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Maximize, Minimize, RotateCcw } from 'lucide-react'
+import { Maximize, Minimize, RotateCcw, RotateCwSquare } from 'lucide-react'
 import ConfirmModal from '~/components/ConfirmModal'
 import { createBurst, type BurstParticle } from '~/lib/celebration'
+import { useFullscreen } from '~/lib/use-fullscreen'
+import { useMediaQuery } from '~/lib/use-media-query'
 
 // Shared look for every scoreboard control: circular, translucent grey fill,
 // with a lighter translucent border so the rim reads brighter than the fill.
 const controlBtn =
-  'flex items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition hover:bg-white/20 active:scale-95'
+  'flex shrink-0 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white backdrop-blur-sm transition hover:bg-white/20 active:scale-95'
 
 function ScoreCounter() {
   const [scores, setScores] = useState([0, 0])
-  const [isFullscreen, setIsFullscreen] = useState(false)
   const [showResetModal, setShowResetModal] = useState(false)
+  const [rotated, setRotated] = useState(false)
+  const fullscreen = useFullscreen()
+  const isPortrait = useMediaQuery('(orientation: portrait)')
+  const stacked = isPortrait !== rotated
 
   const adjust = useCallback((team: 0 | 1, delta: number) => {
     setScores((prev) => {
@@ -22,31 +27,18 @@ function ScoreCounter() {
     })
   }, [])
 
-  const reset = useCallback(() => {
-    setShowResetModal(true)
-  }, [])
-
   const confirmReset = useCallback(() => {
     setScores([0, 0])
     setShowResetModal(false)
   }, [])
 
-  const toggleFullscreen = useCallback(async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen()
-        setIsFullscreen(true)
-      } else {
-        await document.exitFullscreen()
-        setIsFullscreen(false)
-      }
-    } catch {
-      // Fullscreen not supported or denied
-    }
-  }, [])
-
   return (
-    <div className="relative flex h-dvh w-screen bg-(--color-ink) text-white select-none">
+    <div
+      data-testid="board"
+      data-layout={stacked ? 'stacked' : 'side-by-side'}
+      data-rotated={rotated || undefined}
+      className={`scoreboard flex touch-manipulation overflow-hidden bg-(--color-ink) text-white select-none ${stacked ? 'flex-col' : 'flex-row'}`}
+    >
       {showResetModal && (
         <ConfirmModal
           message="Reset both scores to 0?"
@@ -55,41 +47,56 @@ function ScoreCounter() {
           onCancel={() => setShowResetModal(false)}
         />
       )}
-      {/* Floating buttons */}
-      <a
-        href={import.meta.env.BASE_URL}
-        aria-label="Back to home"
-        className={`absolute top-3 left-3 z-10 size-14 ${controlBtn}`}
-      >
-        <ArrowLeft size={26} />
-      </a>
-      <button
-        onClick={reset}
-        aria-label="Reset scores"
-        className={`absolute top-3 left-1/2 z-10 size-14 -translate-x-1/2 ${controlBtn}`}
-      >
-        <RotateCcw size={26} />
-      </button>
-      <button
-        onClick={toggleFullscreen}
-        aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-        className={`absolute top-3 right-3 z-10 size-14 ${controlBtn}`}
-      >
-        {isFullscreen ? <Minimize size={26} /> : <Maximize size={26} />}
-      </button>
 
-      {/* Score panels */}
       <TeamPanel
         label="Home"
+        wide={stacked}
         score={scores[0]}
         onIncrement={() => adjust(0, 1)}
         onDecrement={() => adjust(0, -1)}
         bgClass="bg-blue-800"
         activeBgClass="active:bg-blue-700"
       />
-      <div className="w-1 bg-(--color-ink)" />
+
+      {/* Controls live in the seam between panels so they never cover a score. */}
+      <div
+        className={`flex shrink-0 items-center justify-center gap-3 ${stacked ? 'h-18 flex-row' : 'w-18 flex-col'}`}
+      >
+        <button
+          onClick={() => setShowResetModal(true)}
+          aria-label="Reset scores"
+          className={`size-14 ${controlBtn}`}
+        >
+          <RotateCcw size={26} />
+        </button>
+        <button
+          onClick={() => setRotated((r) => !r)}
+          aria-label="Rotate scoreboard"
+          aria-pressed={rotated}
+          className={`size-14 ${controlBtn}`}
+        >
+          <RotateCwSquare size={26} />
+        </button>
+        {fullscreen.isSupported && (
+          <button
+            onClick={fullscreen.toggle}
+            aria-label={
+              fullscreen.isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'
+            }
+            className={`size-14 ${controlBtn}`}
+          >
+            {fullscreen.isFullscreen ? (
+              <Minimize size={26} />
+            ) : (
+              <Maximize size={26} />
+            )}
+          </button>
+        )}
+      </div>
+
       <TeamPanel
         label="Away"
+        wide={stacked}
         score={scores[1]}
         onIncrement={() => adjust(1, 1)}
         onDecrement={() => adjust(1, -1)}
@@ -102,6 +109,7 @@ function ScoreCounter() {
 
 function TeamPanel({
   label,
+  wide,
   score,
   onIncrement,
   onDecrement,
@@ -109,6 +117,7 @@ function TeamPanel({
   activeBgClass,
 }: {
   label: string
+  wide: boolean
   score: number
   onIncrement: () => void
   onDecrement: () => void
@@ -126,22 +135,36 @@ function TeamPanel({
     setBursts((prev) => prev.filter((b) => b.id !== id))
   }, [])
 
+  // Size containment lets the score scale with this panel (cqw/cqh) rather
+  // than the viewport, which is what overflowed in portrait. A tall panel
+  // stacks label / score / −1, so the circle gets the height left after the
+  // label, button and padding (10rem). A wide panel (stacked board) tucks the
+  // label in a corner and −1 at the side so the score gets the full height.
   return (
-    <div
-      className={`flex flex-1 flex-col items-center justify-between pt-6 pb-4 ${bgClass}`}
+    <section
+      aria-label={label}
+      className={`@container-[size] relative flex min-h-0 min-w-0 flex-1 items-center ${bgClass} ${
+        wide
+          ? 'justify-center [--circle:min(calc(100cqw-12rem),calc(100cqh-2rem))]'
+          : 'flex-col justify-between py-4 [--circle:min(85cqw,calc(100cqh-10rem))]'
+      }`}
     >
-      {/* Label */}
-      <div className="text-lg font-bold tracking-widest text-white/70 uppercase">
+      <div
+        className={`text-lg font-bold tracking-widest text-white/70 uppercase ${wide ? 'absolute top-3 left-4' : ''}`}
+      >
         {label}
       </div>
 
-      {/* Score — contained increment button */}
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex min-h-0 items-center justify-center">
         <button
           onClick={handleIncrement}
-          className={`flex size-[66vmin] items-center justify-center rounded-full ${bgClass} ${activeBgClass} transition active:ring-white/70`}
+          aria-label={`Add point to ${label}`}
+          className={`flex size-(--circle) items-center justify-center rounded-full ${bgClass} ${activeBgClass} transition`}
         >
-          <span className="font-(family-name:--font-score) text-[45vmin] leading-none font-bold text-white tabular-nums">
+          <span
+            data-testid={`${label.toLowerCase()}-score`}
+            className="font-(family-name:--font-score) text-[calc(var(--circle)*0.68)] leading-none font-bold text-white tabular-nums"
+          >
             {score}
           </span>
         </button>
@@ -169,15 +192,14 @@ function TeamPanel({
         </div>
       </div>
 
-      {/* Decrement button */}
       <button
         onClick={onDecrement}
-        aria-label="Subtract one point"
-        className={`size-19 text-2xl font-semibold ${controlBtn}`}
+        aria-label={`Subtract point from ${label}`}
+        className={`size-16 text-2xl font-semibold ${controlBtn} ${wide ? 'absolute top-1/2 right-4 -translate-y-1/2' : ''}`}
       >
         &minus;1
       </button>
-    </div>
+    </section>
   )
 }
 

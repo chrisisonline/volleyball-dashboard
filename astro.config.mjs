@@ -6,6 +6,7 @@ export default defineConfig({
   output: "static",
   site: "https://chrisisonline.github.io",
   base: "/volleyball-dashboard",
+  redirects: { "/scoreboard": "/volleyball-dashboard/" },
   integrations: [react()],
 
   vite: {

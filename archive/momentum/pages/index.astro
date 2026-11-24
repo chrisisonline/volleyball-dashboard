@@ -1,0 +1,9 @@
+---
+import UpcomingCalendar from '~/components/home/UpcomingCalendar'
+import Layout from '~/layouts/Layout.astro'
+---
+
+<Layout title="Volleyball Dashboard">
+  <h1 class="mb-4">Drop In & Clinic Schedule</h1>
+  <UpcomingCalendar client:only="react" />
+</Layout>

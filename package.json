@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "fetch:xtsc": "tsx scripts/fetch-xtsc.ts"
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
@@ -32,6 +33,7 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
     "eslint": "^9.39.4",
